@@ -1,4 +1,5 @@
 <template>
+<!-- keeping this page because it might have useful links like vuex -->
   <div class="hello">
     <h1>{{ msg }}</h1>
     <p>

@@ -21,7 +21,6 @@ export default {
     }, 
     methods: {
         selected: function(){
-            console.log(this.pieceType)
             this.$emit('pieceSelected', this.space)
         }
     }
