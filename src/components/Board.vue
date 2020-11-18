@@ -51,9 +51,7 @@ export default {
         for ( i = 7; i >= 0; i--){
             for ( j = 7; j >= 0; j--){
                 if (i === 7) {
-                    if (j === 0 || j === 7) {
-                        this.piecesArray[i][j] = "BlackRook"; 
-                    }
+                    if (j === 0 || j === 7) this.piecesArray[i][j] = "BlackRook"; 
                     if (j === 1 || j === 6) this.piecesArray[i][j] = "BlackKnight";
                     if (j === 2 || j === 5) this.piecesArray[i][j] = "BlackBishop";
                     if (j === 3) this.piecesArray[i][j] = "BlackQueen";
