@@ -1,6 +1,6 @@
 <template>
   <div class="piece">
-      <img :src="'@/assets/' + pieceType + '.png'" v-on:click="selected" />
+      <img :src="require(`../assets/${pieceType}.png`)" v-on:click="selected" />
   </div>
 </template>
 
@@ -16,11 +16,12 @@ export default {
     },
     data: function() {
         return{
-            hasNotMoved: true,
+            hasNotMoved: true
         }
     }, 
     methods: {
         selected: function(){
+            console.log(this.pieceType)
             this.$emit('pieceSelected', this.space)
         }
     }

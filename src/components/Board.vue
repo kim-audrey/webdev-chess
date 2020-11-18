@@ -27,7 +27,7 @@
 
 <script>
 //TODO: Store chessboard so it doesn't delete on refresh (use vuex?)
-// make images work
+// make images not big
 // make tiles and pieces stack correctly
 
 import Tile from '@/components/Tile'
@@ -94,5 +94,5 @@ export default {
     .chess-board th { padding: .5em; }
     .chess-board td { border: 1px solid; width: 2em; height: 2em; }
     .chess-board .light { background: #eee; }
-    .chess-board .dark { background: #000; }
+    .chess-board .dark { background: #333; }
 </style>
