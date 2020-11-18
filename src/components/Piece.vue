@@ -11,7 +11,7 @@ export default {
             type: String
         },
         space: {
-            type: Array
+            type: String
         }
     },
     data: function() {

@@ -1,7 +1,5 @@
 <template>
-  <div class="tile">
-      
-  </div>
+    <span/>
 </template>
 
 <script>
