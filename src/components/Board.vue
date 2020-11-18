@@ -16,7 +16,8 @@
                 <tr v-for="n in 8" :key="n">
                     <th>{{9 - n}}</th>
                     <td v-for="m in 8" :key="m" :class="{light: (n+m)%2==0, dark: (n+m)%2==1}">
-                        <Tile v-on:tileSelected="tileSelection" />
+                        <Tile :space="String(8-n) + String(m-1)" v-on:tileSelected="tileSelection" />
+                        <Piece v-if="piecesArray[8-n][m-1] != null" :pieceType="piecesArray[8-n][m-1]" :space="String(8-n) + String(m-1)" v-on:pieceSelected="pieceSelection" />
                     </td>
                 </tr>
             </tbody>
@@ -25,20 +26,26 @@
 </template>
 
 <script>
+//TODO: Store chessboard so it doesn't delete on refresh (use vuex?)
+// make images work
+// make tiles and pieces stack correctly
+
 import Tile from '@/components/Tile'
+import Piece from '@/components/Piece'
 export default {
     components:{
-        Tile
+        Tile, Piece
     },
     data: function(){
         return{
             //taken from https://stackoverflow.com/questions/16512182/how-to-create-empty-2d-array-in-javascript
             //piecesArray: [[...Array(8)].map(() => Array(8)),]
             //taken from https://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
-            piecesArray: Array.from(Array(8), () => new Array(8))
+            piecesArray: Array.from(Array(8), () => new Array(8).fill(null))
         }
     },
-    mounted: function() {
+    created: function() {
+        console.info(this.piecesArray)
         var i;
         var j;
         for ( i = 7; i >= 0; i--){
@@ -70,7 +77,10 @@ export default {
     },
     methods: {
         tileSelection: function(position) {
-            console.log(position)
+            var space = [Number(position[0]), Number(position[1])]
+            if (this.piecesArray[space[0]][space[1]] === null){
+                console.log(position)
+            }
         },
         pieceSelection: function(position){
             console.log(position)
