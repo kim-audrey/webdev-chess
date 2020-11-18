@@ -16,7 +16,7 @@
                 <tr v-for="n in 8" :key="n">
                     <th>{{9 - n}}</th>
                     <td v-for="m in 8" :key="m" :class="{light: (n+m)%2==0, dark: (n+m)%2==1}">
-                        <Tile :space="String(8-n) + String(m-1)" v-on:tileSelected="tileSelection" />
+                        <Tile v-if="piecesArray[8-n][m-1] === null" :space="String(8-n) + String(m-1)" v-on:tileSelected="tileSelection" />
                         <Piece v-if="piecesArray[8-n][m-1] != null" :pieceType="piecesArray[8-n][m-1]" :space="String(8-n) + String(m-1)" v-on:pieceSelected="pieceSelection" />
                     </td>
                 </tr>
@@ -92,7 +92,7 @@ export default {
 /* taken from https://stackoverflow.com/questions/26432492/chessboard-html5-only/26432909 */
     .chess-board { border-spacing: 0; border-collapse: collapse; }
     .chess-board th { padding: .5em; }
-    .chess-board td { border: 1px solid; width: 2em; height: 2em; }
+    .chess-board td { border: 2px solid; border-color: black; width: 64px; height: 64px }
     .chess-board .light { background: #eee; }
-    .chess-board .dark { background: #333; }
+    .chess-board .dark { background: #622; }
 </style>
