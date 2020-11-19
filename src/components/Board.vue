@@ -91,7 +91,15 @@ export default {
         pieceSelection: function(position){
             console.log(position)
         }
+    },
+    sockets: {
+    connect() {
+      console.log('socket connected')
+    },
+    customEmit(val) {
+      console.log(val)
     }
+  }
 }
 </script>
 
