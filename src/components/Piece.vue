@@ -3,7 +3,7 @@
       <!-- Load the piece's image, which is stored in assets, -->
       <!-- Based on the name that was passed from Board on creation. -->
       <!-- Set up a handler for when it is clicked. -->
-      <img :src="require(`../assets/${pieceType}.png`)" v-on:click="selected" />
+      <img draggable="false" :src="require(`../assets/${pieceType}.png`)" v-on:click="selected" />
   </div>
 </template>
 
