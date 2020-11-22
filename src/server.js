@@ -14,7 +14,7 @@ const io = socketio(server, {
 io.on("connection", (socket) => {
     console.log("connet")
     socket.emit('welcome', "Welcome to the socket.io server!")
-    socket.on('message', (msg) => {
+    socket.on('pingServer', (msg) => {
         console.log(msg)
     })
 })

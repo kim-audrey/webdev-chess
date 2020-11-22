@@ -3,7 +3,7 @@
         <h1 id="title">Chess</h1>
         <p id="byline">By: Yash C. Alex D. Audrey K. Michael P.</p>
 
-        <button class="button" @click="showModal=true">Make Your Own Game</button>
+        <button class="button" @click="pingServer">Make Your Own Game</button>
         <transition name="fade" appear>
             <div class="modal-overlay" v-if="showModal" @click="showModal=false"></div>
         </transition>
@@ -25,8 +25,44 @@
 
 </template>
 
+<script>
+export default {
+  name: "Login",
+  components: {
 
-
+  },
+  data() {
+    return {
+      showModal: true,
+      socketMessage: ""
+    };
+  },
+  // lifecycle functions
+  mounted () {
+      this.showModal = false
+  },
+  //Responses to events sent from the server
+  sockets: {
+    connect() {
+        console.log('receeve')
+     },
+    disconnect() { },
+    welcome(data) {
+      console.log(data)
+    }
+  },
+  //Way to send things to server (call the function)
+  methods: {
+    pingServer() {
+      // Send the "pingServer" event to the server.
+      this.$socket.emit('pingServer', 'PING!')
+    },
+    showThatModal() {
+        this.showModal = true;
+    }
+  }
+};
+</script>
 
 <style scoped>
 #app{
@@ -109,16 +145,3 @@
 
 
 </style>
-
-
-<script>
-export default {
-  name: "App",
-  data() {
-    return {
-      showModal: true
-    };
-  },
-  components: {}
-};
-</script>
