@@ -12,9 +12,18 @@ const io = socketio(server, {
 
 //respond when the client connects
 io.on("connection", (socket) => {
-    console.log("connet")
-    socket.emit('welcome', "Welcome to the socket.io server!")
-    socket.on('pingServer', (msg) => {
-        console.log(msg)
+    socket.on('joinRoom', (code) => {
+      let rooms = Object.keys(io.sockets.adapter.rooms);
+      if( rooms[code]!=null && rooms[code].length===2){
+        console.log("fullroom")
+        socket.emit("fullRoom")
+      }
+      else{
+        socket.join(code)
+        console.log(Object.keys(io.sockets.adapter.rooms))
+        socket.on('moveEvent', (data)=>{
+          io.broadcast.to(code).emit("moveResponse", data)
+        })
+      }
     })
 })

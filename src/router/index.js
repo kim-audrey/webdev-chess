@@ -12,7 +12,7 @@ const routes = [
     component: Login
   },
   {
-    path: "/game",
+    path: "/game/:gameID",
     name: "Game",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
@@ -23,6 +23,7 @@ const routes = [
 ];
 
 const router = new VueRouter({
+  mode: 'history',
   routes
 });
 

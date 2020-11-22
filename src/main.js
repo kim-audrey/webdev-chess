@@ -15,9 +15,4 @@ new Vue({
   router,
   store,
   render: h => h(App),
-  sockets: {
-    connect() {
-      console.log('socket connected')
-    },
-  }
 }).$mount("#app");

@@ -93,12 +93,12 @@ export default {
         }
     },
     sockets: {
-    connect() {
-      console.log('socket connected')
-    },
-    customEmit(val) {
-      console.log(val)
-    }
+        connect() {
+          this.$socket.client.emit("joinRoom", this.$route.params.gameID)
+        },
+        fullRoom(){
+            console.log('full')
+        }
   }
 }
 </script>
