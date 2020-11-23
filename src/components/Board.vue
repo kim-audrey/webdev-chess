@@ -91,7 +91,8 @@ export default {
         pieceSelection: function(position){
             console.log(position)
         },
-
+        //Move a piece to a different square and remove it from this space,
+        //then pass the turn to the other player.
         move: function(startposition, endposition){
             var startspace = [Number(startposition[0]), Number(startposition[1])]
             var endspace = [Number(endposition[0]), Number(endposition[1])]
