@@ -45,7 +45,9 @@ export default {
         return{
             //taken from https://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
             piecesArray: Array.from(Array(8), () => new Array(8).fill(null)),
-            turn: true
+            turn: true,
+            startposition: null,
+            endposition:null
         }
     },
     created: function() {
@@ -82,13 +84,25 @@ export default {
         //move it to the new position, store the new board, and send it to the opponent.
         tileSelection: function(position) {
             var space = [Number(position[0]), Number(position[1])]
+            
             if (this.piecesArray[space[0]][space[1]] === null){
+                if (this.startposition !== null){
+                    this.$socket.client.emit("move",this.startposition,position)
+                }
                 console.log(position)
             }
-        },
+        }
+        
+        ,
         //When a piece is selected, check if a piece is already selected. If not, store its position.
         //Otherwise, overwrite the piece at this position with the first selected piece.
         pieceSelection: function(position){
+            if (this.startposition === null){
+                   this.startposition=position;
+                }
+            else{
+                this.$socket.client.emit("move",this.startposition,position)
+            }
             console.log(position)
         },
         //Move a piece to a different square and remove it from this space,
