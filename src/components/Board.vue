@@ -86,10 +86,13 @@ export default {
             
             if (this.piecesArray[space[0]][space[1]] === null){
                 if (this.startposition !== null){
+                    console.log("Moving piece on to tile!")
                     this.move(this.startposition, position)
                     //EMIT THE PIECESARRAY TO THE SERVER HERE
+                } else {
+                    console.log("Cannot select a tile to start!")
                 }
-                console.log(position)
+                console.log("Tile at " + position)
             }
         }
         
@@ -98,13 +101,15 @@ export default {
         //Otherwise, overwrite the piece at this position with the first selected piece.
         pieceSelection: function(position){
             if (this.startposition === null){
+                    console.log("Start-Selected " + position)
                    this.startposition = position;
                 }
             else{
+                console.log("Moving piece on to piece")
                 this.move(this.startposition, position)
                 //EMIT THE PIECESARRAY TO THE SERVER HERE
             }
-            console.log(position)
+            console.log("Piece at " + position)
         },
         //Move a piece to a different square and remove it from this space,
         //then pass the turn to the other player.
@@ -112,8 +117,10 @@ export default {
             var startspace = [Number(startposition[0]), Number(startposition[1])]
             var endspace = [Number(endposition[0]), Number(endposition[1])]
             
-            this.piecesArray[endspace[0],endspace[1]] = this.piecesArray[startspace[0],startspace[1]];
-            this.piecesArray[startspace[0],startspace[1]] = null;
+            this.piecesArray[endspace[0]][endspace[1]] = this.piecesArray[startspace[0]][startspace[1]];
+            this.piecesArray[startspace[0]][startspace[1]] = null;
+
+            console.info(this.piecesArray)
 
             this.startposition = null;
             this.turn =! this.turn;
