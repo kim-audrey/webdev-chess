@@ -41,10 +41,13 @@ export default {
             //taken from https://stackoverflow.com/questions/16512182/how-to-create-empty-2d-array-in-javascript
             //piecesArray: [[...Array(8)].map(() => Array(8)),]
             //taken from https://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
-            piecesArray: Array.from(Array(8), () => new Array(8).fill(null))
+            piecesArray: Array.from(Array(8), () => new Array(8).fill(null)),
+
+            turn: Boolean
         }
     },
     created: function() {
+        this.turn= true;
         console.info(this.piecesArray)
         var i;
         var j;
@@ -76,13 +79,27 @@ export default {
     methods: {
         tileSelection: function(position) {
             var space = [Number(position[0]), Number(position[1])]
-            if (this.piecesArray[space[0]][space[1]] === null){
+            if (this.piecesArray[space[0]][space[1]] !== null){
                 console.log(position)
             }
         },
         pieceSelection: function(position){
             console.log(position)
+        },
+
+        move: function(startposition, endposition){
+            var startspace = [Number(startposition[0]), Number(startposition[1])]
+            var endspace = [Number(endposition[0]), Number(endposition[1])]
+            console.log(startposition)
+
+            this.piecesArray[endspace[0],endspace[1]]==this.piecesArray[startspace[0],startspace[1]];
+            this.piecesArray[startspace[0],startspace[1]]=null;
+
+            console.log(endposition)
+            this.turn=!this.turn;
         }
+
+
     }
 }
 </script>
@@ -94,5 +111,5 @@ export default {
     .chess-board th { padding: .5em; }
     .chess-board td { border: 2px solid; border-color: black; width: 64px; height: 64px }
     .chess-board .light { background: #eee; }
-    .chess-board .dark { background: #622; }
+   .chess-board .dark { background: #622; }
 </style>
