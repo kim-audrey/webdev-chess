@@ -47,7 +47,6 @@ export default {
             piecesArray: Array.from(Array(8), () => new Array(8).fill(null)),
             turn: true,
             startposition: null,
-            endposition:null
         }
     },
     created: function() {
@@ -87,7 +86,8 @@ export default {
             
             if (this.piecesArray[space[0]][space[1]] === null){
                 if (this.startposition !== null){
-                    this.move(startposition, position)
+                    this.move(this.startposition, position)
+                    //EMIT THE PIECESARRAY TO THE SERVER HERE
                 }
                 console.log(position)
             }
@@ -101,7 +101,8 @@ export default {
                    this.startposition = position;
                 }
             else{
-                this.move(startposition, position)
+                this.move(this.startposition, position)
+                //EMIT THE PIECESARRAY TO THE SERVER HERE
             }
             console.log(position)
         },
@@ -111,15 +112,11 @@ export default {
             var startspace = [Number(startposition[0]), Number(startposition[1])]
             var endspace = [Number(endposition[0]), Number(endposition[1])]
             
-
             this.piecesArray[endspace[0],endspace[1]] = this.piecesArray[startspace[0],startspace[1]];
             this.piecesArray[startspace[0],startspace[1]] = null;
 
-        
-            startposition=null;
+            this.startposition = null;
             this.turn =! this.turn;
-
-
         }
     },
     sockets: {
