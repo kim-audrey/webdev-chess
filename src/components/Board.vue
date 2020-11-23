@@ -87,7 +87,7 @@ export default {
             
             if (this.piecesArray[space[0]][space[1]] === null){
                 if (this.startposition !== null){
-                    this.$socket.client.emit("move",this.startposition,position)
+                    this.move(startposition, position)
                 }
                 console.log(position)
             }
@@ -98,10 +98,10 @@ export default {
         //Otherwise, overwrite the piece at this position with the first selected piece.
         pieceSelection: function(position){
             if (this.startposition === null){
-                   this.startposition=position;
+                   this.startposition = position;
                 }
             else{
-                this.$socket.client.emit("move",this.startposition,position)
+                this.move(startposition, position)
             }
             console.log(position)
         },
@@ -110,13 +110,16 @@ export default {
         move: function(startposition, endposition){
             var startspace = [Number(startposition[0]), Number(startposition[1])]
             var endspace = [Number(endposition[0]), Number(endposition[1])]
-            console.log(startposition)
+            
 
             this.piecesArray[endspace[0],endspace[1]] = this.piecesArray[startspace[0],startspace[1]];
             this.piecesArray[startspace[0],startspace[1]] = null;
 
-            console.log(endposition)
+        
+            startposition=null;
             this.turn =! this.turn;
+
+
         }
     },
     sockets: {
