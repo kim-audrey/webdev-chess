@@ -75,6 +75,9 @@ export default {
                 }
             }
         }
+
+        //Joins room upon board being created
+        this.$socket.client.emit("joinRoom", this.$route.params.gameID)
         //Somewhere either here or another function, we should retrieve the chessboard.
     },
     methods: {
@@ -106,9 +109,6 @@ export default {
         }
     },
     sockets: {
-        connect() {
-          this.$socket.client.emit("joinRoom", this.$route.params.gameID)
-        },
         fullRoom(){
             console.log('full')
         }
