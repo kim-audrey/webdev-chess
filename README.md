@@ -1,4 +1,17 @@
 # webdev-chess
+An online chess gaming platform where you can join your friends in private rooms to play!
+
+## Usage
+### Create A New Game
+To create your own game room, press the "Make Your Own Game" button on the Login page. You will be given a game code to share with your opponent. 
+
+### Entering a Pre-existing Game
+If given a game code, enter the code into the text box after "Enter Game Code Here:" and you will be able to join the game of your opponent. 
+
+### Playing The Game
+To move pieces, click your piece and then the square which you'd like your piece to move to.
+
+
 
 ## Project setup
 ```
