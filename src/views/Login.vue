@@ -10,7 +10,7 @@
 
         <transition name="slide" appear>
             <div class="modal" v-if="showModal">
-                <h1>Lorem Ipsum</h1>
+                <h1>Your New Game Code:</h1>
                 <p>Lorem</p>
                 <button class="button" @click="showModal=false">Close Modal</button>
             </div>
@@ -80,9 +80,10 @@ export default {
 }
 
 #byline {
-
 }
 
+
+/* Credit to: https://www.youtube.com/watch?v=VuGRSpy92cI */
 .modal {
     position: fixed;
     top: 50%;
@@ -144,4 +145,26 @@ export default {
 }
 
 
+<<<<<<< Updated upstream
 </style>
+=======
+</style>
+
+
+<script>
+export default {
+  name: "App",
+  data() {
+    return {
+      showModal: true
+    };
+  },
+  components: {},
+
+  
+
+  
+
+};
+</script>
+>>>>>>> Stashed changes
