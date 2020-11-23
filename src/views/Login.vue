@@ -53,6 +53,18 @@ export default {
   },
   //Way to send things to server (call the function)
   methods: {
+
+/*
+    generateCode(){
+      this.$socket.client.emit('generateCode')
+    }
+
+    // I'd put this method in server:
+    generateCode(){
+      makeKey = this.$socket.IPAddress.split(".")     // generate gamecode based off of their IP Address
+    }
+
+*/
     pingServer() {
       // Send the "pingServer" event to the server.
         this.$socket.client.emit('pingServer', 'PING!')
@@ -63,6 +75,12 @@ export default {
   }
 };
 </script>
+
+
+
+
+
+
 
 <style scoped>
 #app{
@@ -143,28 +161,3 @@ export default {
     align-items: center;
     display: flex;
 }
-
-
-<<<<<<< Updated upstream
-</style>
-=======
-</style>
-
-
-<script>
-export default {
-  name: "App",
-  data() {
-    return {
-      showModal: true
-    };
-  },
-  components: {},
-
-  
-
-  
-
-};
-</script>
->>>>>>> Stashed changes
