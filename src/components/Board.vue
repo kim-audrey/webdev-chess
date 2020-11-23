@@ -45,13 +45,10 @@ export default {
         return{
             //taken from https://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
             piecesArray: Array.from(Array(8), () => new Array(8).fill(null)),
-
-            turn: Boolean
+            turn: true
         }
     },
     created: function() {
-        this.turn= true;
-        console.info(this.piecesArray)
         var i;
         var j;
         for ( i = 7; i >= 0; i--){
@@ -85,7 +82,7 @@ export default {
         //move it to the new position, store the new board, and send it to the opponent.
         tileSelection: function(position) {
             var space = [Number(position[0]), Number(position[1])]
-            if (this.piecesArray[space[0]][space[1]] !== null){
+            if (this.piecesArray[space[0]][space[1]] === null){
                 console.log(position)
             }
         },
@@ -100,11 +97,11 @@ export default {
             var endspace = [Number(endposition[0]), Number(endposition[1])]
             console.log(startposition)
 
-            this.piecesArray[endspace[0],endspace[1]]==this.piecesArray[startspace[0],startspace[1]];
-            this.piecesArray[startspace[0],startspace[1]]=null;
+            this.piecesArray[endspace[0],endspace[1]] = this.piecesArray[startspace[0],startspace[1]];
+            this.piecesArray[startspace[0],startspace[1]] = null;
 
             console.log(endposition)
-            this.turn=!this.turn;
+            this.turn =! this.turn;
         }
     },
     sockets: {
