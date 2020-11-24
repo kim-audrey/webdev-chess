@@ -117,18 +117,10 @@ export default {
             var startspace = [Number(startposition[0]), Number(startposition[1])]
             var endspace = [Number(endposition[0]), Number(endposition[1])]
             
-            // this.piecesArray[endspace[0]][endspace[1]] = this.piecesArray[startspace[0]][startspace[1]];
-            // this.piecesArray[startspace[0]][startspace[1]] = null;
+            this.piecesArray[endspace[0]][endspace[1]] = this.piecesArray[startspace[0]][startspace[1]];
+            this.piecesArray[startspace[0]][startspace[1]] = null;
 
-            
-
-            var endcell=document.getElementById('chess-board').rows[parseInt(endspace[0],10)].cells;
-            endcell[parseInt(endspace[1],10)].innerHTML=this.piecesArray[startspace[0]][startspace[1]];
-
-            var startcell=document.getElementById('chess-board').rows[parseInt(startspace[0],10)].cells;
-            startcell[parseInt(startspace[1],10)].innerHTML=null;
             console.info(this.piecesArray)
-
 
             this.startposition = null;
             this.turn =! this.turn;
