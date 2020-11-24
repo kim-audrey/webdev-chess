@@ -32,8 +32,11 @@
 
 <script>
 //TODO: Store chessboard so it doesn't delete on refresh (use vuex?)
-//Move Pieces!
 //Send moves to the other player (can't do this yet)
+
+//Current: Resize Images
+//Make it so tile sizes are constant
+//Add movement logic
 
 import Tile from '@/components/Tile'
 import Piece from '@/components/Piece'
