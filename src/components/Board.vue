@@ -94,9 +94,7 @@ export default {
                 }
                 console.log("Tile at " + position)
             }
-        }
-        
-        ,
+        },
         //When a piece is selected, check if a piece is already selected. If not, store its position.
         //Otherwise, overwrite the piece at this position with the first selected piece.
         pieceSelection: function(position){
@@ -124,6 +122,8 @@ export default {
 
             this.startposition = null;
             this.turn =! this.turn;
+
+            this.$forceUpdate();
         }
     },
     sockets: {
