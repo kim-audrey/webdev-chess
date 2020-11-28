@@ -21,6 +21,7 @@ export default {
 
 <style>
 .tile{
-    height: 100%;
+    height: 64px;
+    width: 64px;
 }
 </style>

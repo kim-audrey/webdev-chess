@@ -33,5 +33,8 @@ export default {
 </script>
 
 <style>
-
+.piece{
+    height: 64px;
+    width: 64px;
+}
 </style>

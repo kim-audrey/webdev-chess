@@ -15,7 +15,7 @@
                     <th>g</th>
                     <th>h</th>
                 </tr>
-                <!-- Use Vue.JS functions to iterate through each square of the chess board and -->\
+                <!-- Use Vue.JS functions to iterate through each square of the chess board and -->
                 <!-- Dynamically put chess pieces where they belong and empty clickable tile squares otherwise. -->
                 <!-- Additionally, alternate between dark and light tiles. -->
                 <tr v-for="n in 8" :key="n">
@@ -34,8 +34,6 @@
 //TODO: Store chessboard so it doesn't delete on refresh (use vuex?)
 //Send moves to the other player (can't do this yet)
 
-//Current: Resize Images
-//Make it so tile sizes are constant
 //Add movement logic
 
 import Tile from '@/components/Tile'
@@ -124,8 +122,6 @@ export default {
             this.piecesArray[endspace[0]][endspace[1]] = this.piecesArray[startspace[0]][startspace[1]];
             this.piecesArray[startspace[0]][startspace[1]] = null;
 
-            console.info(this.piecesArray)
-
             this.startposition = null;
             this.turn =! this.turn;
 
@@ -146,7 +142,7 @@ export default {
 /* CSS for a chessboard, altered for our specifications and ideas. */
     .chess-board { border-spacing: 0; border-collapse: collapse; }
     .chess-board th { padding: .5em; }
-    .chess-board td { border: 2px solid; border-color: black; width: 64px; height: 64px }
+    .chess-board td { border: 2px solid; border-color: black; width: 64px; height: 64px; padding: 0; margin: 0; }
     .chess-board .light { background: #eee; }
    .chess-board .dark { background: #622; }
 </style>
