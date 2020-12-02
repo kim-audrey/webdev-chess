@@ -143,7 +143,8 @@ export default {
         fullRoom(){
             console.log('full')
         },
-        color(/*c*/){
+        color(c){
+            color=c;
             //recieve what color you are
             //set what your turn is
         },
