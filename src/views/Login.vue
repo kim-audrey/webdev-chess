@@ -53,6 +53,8 @@ export default {
   },
   //Way to send things to server (call the function)
   methods: {
+      // when they enter gamecode, redirect them to game/{gamecode}
+      // 
 
 /*
     generateCode(){
