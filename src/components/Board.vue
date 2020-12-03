@@ -99,7 +99,6 @@ export default {
                 if (this.startposition !== null){
                     console.log("Moving piece on to tile!")
                     this.move(this.startposition, position)
-                    this.$socket.client.emit('moveEvent', this.piecesArray)
                 } else {
                     console.log("Cannot select a tile to start!")
                 }
@@ -116,7 +115,6 @@ export default {
             else{
                 console.log("Moving piece on to piece")
                 this.move(this.startposition, position)
-                //EMIT THE PIECESARRAY TO THE SERVER HERE
             }
             console.log("Piece at " + position)
         },
@@ -131,6 +129,8 @@ export default {
 
             this.startposition = null;
             this.turn =! this.turn;
+
+            this.$socket.client.emit('moveEvent', this.piecesArray)
 
             this.$forceUpdate();
         }, 
@@ -148,9 +148,9 @@ export default {
             this.color = c;
             this.turn = c === "White" ? true : false;
         },
-        moveResponse(/*recievedArray*/){
-            // recieve the piecesArray of the other player from the server
-            // turn the piecesArray into what was recieved.
+        moveResponse(recievedArray){
+            this.piecesArray = recievedArray
+            this.$forceUpdate();
         }
     }
 }
