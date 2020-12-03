@@ -144,7 +144,7 @@ export default {
             console.log('full')
         },
         color(c){
-            color=c;
+            this.color = c;
             //recieve what color you are
             //set what your turn is
         },
