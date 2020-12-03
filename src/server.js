@@ -22,13 +22,13 @@ io.on("connection", (socket) => {
         socket.join(code)
         room = io.sockets.adapter.rooms.get(code);
         if(room.size==1){
-          var c=(Math.random() < 0.5 ? "b" : "w");
-          socket.emit("color",c);
-          room.FirstColor=c;
-        }
+          var cf = (Math.random() < 0.5 ? "Black" : "White");
+          socket.emit("color",cf);
+          room.FirstColor=cf;
+        } 
         else if(room.size==2){
-          var c = (room.FirstColor === "w" ? "b" : "w");
-          socket.emit("color",c)
+          var cs = (room.FirstColor === "White" ? "Black" : "White");
+          socket.emit("color",cs)
         }
         socket.on('moveEvent', (data)=>{
           io.broadcast.to(code).emit("moveResponse", data)

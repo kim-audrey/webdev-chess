@@ -2,6 +2,7 @@
   <div class="board">
     <!-- Creates an html table to simulate a chessboard -->
     <!-- idea taken from https://stackoverflow.com/questions/26432492/chessboard-html5-only/26432909 -->
+    <p v-if="color === null">Please wait...</p>
       <table class="chess-board">
             <tbody>
                 <tr>
@@ -51,8 +52,8 @@ export default {
         return{
             //taken from https://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
             piecesArray: Array.from(Array(8), () => new Array(8).fill(null)),
-            turn: true,
-            color: "Gray",
+            color: null,
+            turn: null,
             startposition: null,
         }
     },
@@ -145,8 +146,7 @@ export default {
         },
         color(c){
             this.color = c;
-            //recieve what color you are
-            //set what your turn is
+            this.turn = c === "White" ? true : false;
         },
         moveResponse(/*recievedArray*/){
             // recieve the piecesArray of the other player from the server
