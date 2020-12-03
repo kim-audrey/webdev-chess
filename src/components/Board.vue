@@ -2,6 +2,7 @@
   <div class="board">
     <!-- Creates an html table to simulate a chessboard -->
     <!-- idea taken from https://stackoverflow.com/questions/26432492/chessboard-html5-only/26432909 -->
+    <p v-if="color === null">Please wait...</p>
       <table class="chess-board">
             <tbody>
                 <tr>
@@ -15,7 +16,7 @@
                     <th>g</th>
                     <th>h</th>
                 </tr>
-                <!-- Use Vue.JS functions to iterate through each square of the chess board and -->\
+                <!-- Use Vue.JS functions to iterate through each square of the chess board and -->
                 <!-- Dynamically put chess pieces where they belong and empty clickable tile squares otherwise. -->
                 <!-- Additionally, alternate between dark and light tiles. -->
                 <tr v-for="n in 8" :key="n">
@@ -32,8 +33,14 @@
 
 <script>
 //TODO: Store chessboard so it doesn't delete on refresh (use vuex?)
-//Move Pieces!
 //Send moves to the other player (can't do this yet)
+
+//Add movement logic
+
+//3rd sprint stuff (don't worry about this)
+// Randomized color (might be easy)
+// Switch board direction
+
 
 import Tile from '@/components/Tile'
 import Piece from '@/components/Piece'
@@ -45,7 +52,9 @@ export default {
         return{
             //taken from https://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
             piecesArray: Array.from(Array(8), () => new Array(8).fill(null)),
-            turn: true
+            color: null,
+            turn: null,
+            startposition: null,
         }
     },
     created: function() {
@@ -85,34 +94,65 @@ export default {
         //move it to the new position, store the new board, and send it to the opponent.
         tileSelection: function(position) {
             var space = [Number(position[0]), Number(position[1])]
+            
             if (this.piecesArray[space[0]][space[1]] === null){
-                console.log(position)
+                if (this.startposition !== null){
+                    console.log("Moving piece on to tile!")
+                    this.move(this.startposition, position)
+                    this.$socket.client.emit('moveEvent', this.piecesArray)
+                } else {
+                    console.log("Cannot select a tile to start!")
+                }
+                console.log("Tile at " + position)
             }
         },
         //When a piece is selected, check if a piece is already selected. If not, store its position.
         //Otherwise, overwrite the piece at this position with the first selected piece.
         pieceSelection: function(position){
-            console.log(position)
+            if (this.startposition === null){
+                    console.log("Start-Selected " + position)
+                   this.startposition = position;
+                }
+            else{
+                console.log("Moving piece on to piece")
+                this.move(this.startposition, position)
+                //EMIT THE PIECESARRAY TO THE SERVER HERE
+            }
+            console.log("Piece at " + position)
         },
         //Move a piece to a different square and remove it from this space,
         //then pass the turn to the other player.
         move: function(startposition, endposition){
             var startspace = [Number(startposition[0]), Number(startposition[1])]
             var endspace = [Number(endposition[0]), Number(endposition[1])]
-            console.log(startposition)
 
-            this.piecesArray[endspace[0],endspace[1]] = this.piecesArray[startspace[0],startspace[1]];
-            this.piecesArray[startspace[0],startspace[1]] = null;
+            this.piecesArray[endspace[0]][endspace[1]] = this.piecesArray[startspace[0]][startspace[1]];
+            this.piecesArray[startspace[0]][startspace[1]] = null;
 
-            console.log(endposition)
+            this.startposition = null;
             this.turn =! this.turn;
+
+            this.$forceUpdate();
+        }, 
+        logic: function(){
+            //returns whether the move is valid, such as:
+            //is the player selecting their own pieces
+            //is the move legal
         }
     },
     sockets: {
         fullRoom(){
             console.log('full')
+        },
+        color(c){
+            this.color = c;
+            this.turn = c === "White" ? true : false;
+        },
+        moveResponse(/*recievedArray*/){
+            // recieve the piecesArray of the other player from the server
+            // turn the piecesArray into what was recieved.
         }
-  }
+    }
 }
 </script>
 
@@ -122,7 +162,7 @@ export default {
 /* CSS for a chessboard, altered for our specifications and ideas. */
     .chess-board { border-spacing: 0; border-collapse: collapse; }
     .chess-board th { padding: .5em; }
-    .chess-board td { border: 2px solid; border-color: black; width: 64px; height: 64px }
+    .chess-board td { border: 2px solid; border-color: black; width: 64px; height: 64px; padding: 0; margin: 0; }
     .chess-board .light { background: #eee; }
    .chess-board .dark { background: #622; }
 </style>
