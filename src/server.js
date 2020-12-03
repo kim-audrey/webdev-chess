@@ -31,7 +31,7 @@ io.on("connection", (socket) => {
           socket.emit("color",cs)
         }
         socket.on('moveEvent', (data)=>{
-          io.to(code).broadcast.emit("moveResponse", data)
+          io.to(code).emit("moveResponse", data)
         })
       }
     })
