@@ -134,10 +134,60 @@ export default {
 
             this.$forceUpdate();
         }, 
-        logic: function(){
+        logic: function(startposition,endposition){
             //returns whether the move is valid, such as:
             //is the player selecting their own pieces
             //is the move legal
+            var startspace = [Number(startposition[0]), Number(startposition[1])]
+            var endspace = [Number(endposition[0]), Number(endposition[1])]
+            pieceIdentity= this.piecesArray[startspace[0]][startspace[1]];
+
+            switch (pieceIdentity) {
+                case "BlackRook":
+                    console.log("Uh oh.");
+                    break;
+                case "WhiteRook":
+                    console.log("Uh oh.");
+                    break;
+                case "BlackKnight":
+                    console.log("Uh oh.");
+                    break;
+                case "WhiteKinght":
+                    console.log("Uh oh.");
+                    break;
+                case "BlackBishop":
+                    console.log("Uh oh.");
+                    break;
+                case "WhiteBishop":
+                    console.log("Uh oh.");
+                    break;
+                case "BlackKing":
+                    console.log("Going to King Logic");
+                break;
+                 case "WhiteKing":
+                    console.log("Going to King Logic");
+                break;
+                case "BlackQueen":
+                    console.log("Uh oh.");
+                break;
+                case "WhiteQueen":
+                    console.log("Uh oh.");
+                break;
+                case "BlackPawn":
+                    console.log("Going to Pawn Logic");
+                break;
+                case "WhitePawn":
+                    console.log("Going to Pawn Logic");
+                break;
+               
+               default:
+                    console.log("Uhhhhh damn, you weren't supposed to see that");
+                    return False;
+                
+                }
+
+
+
         }
     },
     sockets: {
