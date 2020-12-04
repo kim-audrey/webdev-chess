@@ -144,10 +144,10 @@ export default {
 
             switch (pieceIdentity) {
                 case "BlackRook":
-                    console.log("Uh oh.");
+                    console.log("Going to Rook Logic");
                     break;
                 case "WhiteRook":
-                    console.log("Uh oh.");
+                    console.log("Going to Rook Logic");
                     break;
                 case "BlackKnight":
                     console.log("Uh oh.");
@@ -184,11 +184,10 @@ export default {
                     console.log("Uhhhhh damn, you weren't supposed to see that");
                     return False;
                 
-                }
-
-
-
+            }
         }
+
+
     },
     sockets: {
         fullRoom(){
