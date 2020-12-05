@@ -44,6 +44,7 @@
 
 import Tile from '@/components/Tile'
 import Piece from '@/components/Piece'
+import func from '../../vue-temp/vue-editor-bridge'
 export default {
     components:{
         Tile, Piece
@@ -121,6 +122,7 @@ export default {
         //Move a piece to a different square and remove it from this space,
         //then pass the turn to the other player.
         move: function(startposition, endposition){
+            if(logic(startposition,endposition)){
             var startspace = [Number(startposition[0]), Number(startposition[1])]
             var endspace = [Number(endposition[0]), Number(endposition[1])]
 
@@ -133,6 +135,7 @@ export default {
             this.$socket.client.emit('moveEvent', this.piecesArray)
 
             this.$forceUpdate();
+            }
         }, 
         logic: function(startposition,endposition){
             //returns whether the move is valid, such as:
@@ -163,10 +166,12 @@ export default {
                     break;
                 case "BlackKing":
                     console.log("Going to King Logic");
-                break;
+                    return this.KingLogic(startspace,endspace,pieceIdentity,"Black")
+               
                  case "WhiteKing":
                     console.log("Going to King Logic");
-                break;
+                    return this.KingLogic(startspace,endspace,pieceIdentity,"White")
+                
                 case "BlackQueen":
                     console.log("Uh oh.");
                 break;
@@ -175,17 +180,60 @@ export default {
                 break;
                 case "BlackPawn":
                     console.log("Going to Pawn Logic");
-                break;
+                    return this.PawnLogic(startspace,endspace,pieceIdentity,"Black")
                 case "WhitePawn":
                     console.log("Going to Pawn Logic");
-                break;
+                    return this.PawnLogic(startspace,endspace,pieceIdentity,"White")
                
                default:
                     console.log("Uhhhhh damn, you weren't supposed to see that");
                     return False;
                 
             }
+        },
+        //Black is on top, White is at the bottom
+        PawnLogic: function(startspace,endspace,color){
+            
+            if (color=="Black"){
+
+                if((this.piecesArray[startspace[0]-1][startspace[1]]===null)){
+                    return true;
+                }
+                if( (7<=(startspace[1]+1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1].substring(0,6)=="White")){
+                    return true;
+                }
+                if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]-1][startspace[1]-1].substring(0,6)=="White")){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+
+            }
+            else if (color=="White"){
+                if((this.piecesArray[startspace[0]+1][startspace[1]]===null)){
+                    return true;
+                }
+                if( (7<=(startspace[1]+1)) && (this.piecesArray[startspace[0]+1][startspace[1]+1].substring(0,6)=="Black")){
+                    return true;
+                }
+                if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]+1][startspace[1]-1].substring(0,6)=="Black")){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+
+            }
+
+        },
+        KingLogic: function(startspace,endspace,color){
+            var startspace = [Number(startposition[0]), Number(startposition[1])]
+            var endspace = [Number(endposition[0]), Number(endposition[1])]
+            if (color=="Black"){}
+            else if (color=="White"){}
         }
+
 
 
     },
