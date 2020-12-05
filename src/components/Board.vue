@@ -44,7 +44,6 @@
 
 import Tile from '@/components/Tile'
 import Piece from '@/components/Piece'
-import func from '../../vue-temp/vue-editor-bridge'
 export default {
     components:{
         Tile, Piece
@@ -122,7 +121,7 @@ export default {
         //Move a piece to a different square and remove it from this space,
         //then pass the turn to the other player.
         move: function(startposition, endposition){
-            if(logic(startposition,endposition)){
+            if(this.logic(startposition,endposition)){
             var startspace = [Number(startposition[0]), Number(startposition[1])]
             var endspace = [Number(endposition[0]), Number(endposition[1])]
 
@@ -143,7 +142,7 @@ export default {
             //is the move legal
             var startspace = [Number(startposition[0]), Number(startposition[1])]
             var endspace = [Number(endposition[0]), Number(endposition[1])]
-            pieceIdentity= this.piecesArray[startspace[0]][startspace[1]];
+            var pieceIdentity= this.piecesArray[startspace[0]][startspace[1]];
 
             switch (pieceIdentity) {
                 case "BlackRook":
@@ -187,7 +186,7 @@ export default {
                
                default:
                     console.log("Uhhhhh damn, you weren't supposed to see that");
-                    return False;
+                    return false;
                 
             }
         },
@@ -240,10 +239,8 @@ export default {
         },
 
         KingLogic: function(startspace,endspace,color){
-            var startspace = [Number(startposition[0]), Number(startposition[1])]
-            var endspace = [Number(endposition[0]), Number(endposition[1])]
-            opposite="";
-             
+            var opposite="";
+            print(opposite)
             
             if((7<=(startspace[0]+1))&&(this.piecesArray[startspace[0]+1][startspace[1]]!=color)){
                 true
