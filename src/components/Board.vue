@@ -165,11 +165,11 @@ export default {
                     break;
                 case "BlackKing":
                     console.log("Going to King Logic");
-                    return this.KingLogic(startspace,endspace,pieceIdentity,"Black")
+                    return this.kingLogic(startspace,endspace,pieceIdentity,"Black")
                
                  case "WhiteKing":
                     console.log("Going to King Logic");
-                    return this.KingLogic(startspace,endspace,pieceIdentity,"White")
+                    return this.kingLogic(startspace,endspace,pieceIdentity,"White")
                 
                 case "BlackQueen":
                     console.log("Uh oh.");
@@ -179,10 +179,10 @@ export default {
                 break;
                 case "BlackPawn":
                     console.log("Going to Pawn Logic");
-                    return this.PawnLogic(startspace,endspace,pieceIdentity,"Black")
+                    return this.pawnLogic(startspace,endspace,pieceIdentity,"Black")
                 case "WhitePawn":
                     console.log("Going to Pawn Logic");
-                    return this.PawnLogic(startspace,endspace,pieceIdentity,"White")
+                    return this.pawnLogic(startspace,endspace,pieceIdentity,"White")
                
                default:
                     console.log("Uhhhhh damn, you weren't supposed to see that");
@@ -191,7 +191,7 @@ export default {
             }
         },
         //Black is on top, White is at the bottom
-        PawnLogic: function(startspace,endspace,color){
+        pawnLogic: function(startspace,endspace,color){
             if (color=="Black"){
 
                 if((this.piecesArray[startspace[0]-1][startspace[1]]===null)){
@@ -238,13 +238,31 @@ export default {
             else{return false;}
         },
 
-        KingLogic: function(startspace,endspace,color){
-            var opposite="";
-            print(opposite)
-            
-            if((7<=(startspace[0]+1))&&(this.piecesArray[startspace[0]+1][startspace[1]]!=color)){
-                true
+         kingLogic: function(startspace,endspace,color){
+          
+            var i,j;
+            for (i=-1;i<=1;i++){
+                for (j=-1;j<=1;j++){
+                    //if in bounds
+                    if((7<=startspace[1]+j)&&(0>=startspace[1]+j)&&(7<=startspace[0]+i)&&(0>=startspace[0]+i)){
+                        //if space is not occupied by teammate
+                        if(this.piecesArray[startspace[0]+i][startspace[1]+j]!=color){
+                            //not skip turn check
+                            if(!(i==0&&j==0)){
+                                //if it's the space selected
+                                if((endspace[0]==startspace[0]+i)&&(endspace[1]==startspace[1]+j))
+                                {
+                                    return true;
+                                }
+                            }
+
+                        }
+                    }
+
+                }
             }
+            return false;
+            
         }
 
 
