@@ -193,45 +193,61 @@ export default {
         },
         //Black is on top, White is at the bottom
         PawnLogic: function(startspace,endspace,color){
-            
             if (color=="Black"){
 
                 if((this.piecesArray[startspace[0]-1][startspace[1]]===null)){
-                    return true;
+                    //honestly I thought it just looked cleaner
+                    if((endspace[0]==startspace[0]-1)&&(endspace[1]==startspace[1])){
+                        return true;
+                    }
+                    
                 }
                 if( (7<=(startspace[1]+1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1].substring(0,6)=="White")){
-                    return true;
+                    if( (endspace[0]==(startspace[0]-1)) && (endspace[1]==(startspace[1]+1)) ){
+                        return true;
+                    }
+                    
                 }
                 if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]-1][startspace[1]-1].substring(0,6)=="White")){
-                    return true;
+                    if( (endspace[0]==(startspace[0]-1)) && (endspace[1]==(startspace[1]-1)) ){
+                        return true;
+                    }
+
                 }
-                else{
-                    return false;
-                }
+                return false;
 
             }
             else if (color=="White"){
                 if((this.piecesArray[startspace[0]+1][startspace[1]]===null)){
-                    return true;
+                    if((endspace[0]==startspace[0]+1)&&(endspace[1]==startspace[1])){
+                        return true;
+                    }
                 }
                 if( (7<=(startspace[1]+1)) && (this.piecesArray[startspace[0]+1][startspace[1]+1].substring(0,6)=="Black")){
-                    return true;
+                    if((endspace[0]==startspace[0]+1)&&(endspace[1]==(startspace[1]+1))){
+                        return true;
+                    }
                 }
                 if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]+1][startspace[1]-1].substring(0,6)=="Black")){
-                    return true;
+                    if((endspace[0]==startspace[0]+1)&&(endspace[1]==(startspace[1]-1))){
+                        return true;
+                    }
                 }
-                else{
                     return false;
-                }
 
             }
-
+            else{return false;}
         },
+
         KingLogic: function(startspace,endspace,color){
             var startspace = [Number(startposition[0]), Number(startposition[1])]
             var endspace = [Number(endposition[0]), Number(endposition[1])]
-            if (color=="Black"){}
-            else if (color=="White"){}
+            opposite="";
+             
+            
+            if((7<=(startspace[0]+1))&&(this.piecesArray[startspace[0]+1][startspace[1]]!=color)){
+                true
+            }
         }
 
 
