@@ -190,6 +190,109 @@ export default {
                 
             }
         },
+
+
+        queenLogic: function(startspace,endspace,color){
+            return bishopLogic(startspace, endspace, color) || rookLogic(startspace, endspace, color);
+        },
+
+        // TODO: how am i supposed to deal with colors? 
+        knightLogic: function(startspace,endspace,color){
+            var xMove = endspace[0] - startspace[0];
+            var yMove = endspace[1] - startspace[1];
+
+            if (Math.abs(xMove == 2) && Math.abs(yMove == 1) || Math.abs(xMove == 1) && Math.abs(yMove == 2)){
+                // ratio is good, just check that no one is in the way
+                var endSpotPiece = this.piecesArray[endspace[0]][endspace[1]];
+                if(endSpotPiece !== null){       
+                    if(endSpotPiece.color != color) // TODO: make sure that's the right way to check colour
+                        return false;
+                    else{
+                    // TODO: Capture it
+                    }
+                }
+                return true;                
+            }
+
+            return false;
+        },
+
+        // TODO: how am i supposed to deal with colors? 
+        rookLogic: function(startspace,endspace,color){
+            var xMove = endspace[0] - startspace[0];
+            var yMove = endspace[1] - startspace[1];
+
+            if (xMove == 0 && yMove == 0)    // are they not moving at all?
+                return false;
+
+            // if they're moving in one direction, good!
+            if (xMove == 0 || yMove == 0){
+                var currXY = [startspace[0], startspace[1]]
+                var endXY = [endspace[0], endspace[1]]
+                var moveIndex = (xMove == 0)? 1 : 0;
+                var moveIncrememnt = (moveIndex == 0)? ((xMove > 0)? 1 : -1) : ((yMove > 0)? 1 : -1);
+
+                while ((currXY[moveIndex] += moveIndex) != endXY[moveIndex]){
+                    // if someone's in our spot,
+                    if(this.piecesArray[currXY[0]][currXY[1]] !== null)
+                        return false;
+                }
+
+                // if the spot we (successfully) land on has a piece, capture it. 
+                var endSpotPiece = this.piecesArray[currXY[0]][currXY[1]];
+                if(endSpotPiece !== null && endSpotPiece.color != color){       // TODO: make sure that's the right way to check colour
+                    // TODO: Capture it
+                }
+
+                // if we move in one direction and no pieces are in our path, we're
+                return true;
+            }
+
+            return false;
+        },
+
+
+        // TODO: how am i supposed to deal with colors? 
+        bishopLogic: function(startspace,endspace,color){
+            var xMove = endspace[0] - startspace[0];
+            var yMove = endspace[1] - startspace[1];
+
+            if (xMove == 0 && yMove == 0)   // are they not moving at all?
+                return false;
+
+            // if they're moving by a square amount, good!
+            if (Math.abs(xMove) == Math.abs(yMove)){
+                
+                // are there any pieces in the way? :
+
+                // directions pieces move in
+                var xDir = (xMove > 0)? 1 : -1;
+                var yDir = (yMove > 0)? 1 : -1;
+
+                var x = startspace[0] + xDir;
+                var y = startspace[1] + yDir;
+
+                while(x != endspace[0]){        // we chose x arbitrarily since x = y
+                    if(this.piecesArray[x][y] !== null){
+                        return false;
+                    }
+                    x += xDir;
+                    y += yDir;
+                }
+
+                // if the spot we (successfully) land on has a piece, capture it. 
+                var endSpotPiece = this.piecesArray[x][y];
+                if(endSpotPiece !== null && endSpotPiece.color != color){       // TODO: make sure that's the right way to check colour
+                    // TODO: Capture it
+                }
+
+                // if we move by square value and no pieces are in our path, we're
+                return true;
+            }
+
+            return false;
+        },
+
         //Black is on top, White is at the bottom
         pawnLogic: function(startspace,endspace,color){
             if (color=="Black"){
