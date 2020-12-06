@@ -1,6 +1,6 @@
 <template>
   <div class="game">
-    <Board />
+    <Board :key="componentKey"/>
   </div>
 </template>
 
@@ -12,6 +12,16 @@ export default {
   name: "Game",
   components: {
     Board
+  },
+    data() {
+      return {
+        componentKey: 0,
+      };
+  },
+  watch: {
+    $route() {
+      this.componentKey += 1;
+    }
   }
 };
 </script>

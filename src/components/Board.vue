@@ -394,13 +394,21 @@ export default {
         fullRoom(){
             console.log('full')
         },
-        color(c){
+        setColor(c){
             this.color = c;
             this.turn = c === "White" ? true : false;
         },
         moveResponse(recievedArray){
             this.piecesArray = recievedArray
             this.$forceUpdate();
+        },
+        getColor(){
+            if(this.color != null){
+                this.$socket.client.emit("colorEcho",this.color);
+            }
+        },
+        colorEcho(col){
+            this.$socket.client.emit("giveColor",col);
         }
     }
 }
