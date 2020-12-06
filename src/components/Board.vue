@@ -32,10 +32,11 @@
 </template>
 
 <script>
-//TODO: Store chessboard so it doesn't delete on refresh (use vuex?)
-//Send moves to the other player (can't do this yet)
+//TODO: Store chessboard so it doesn't delete on refresh (use vuex?)\
 
 //Add movement logic
+//CHESS LOGIC
+// host it!
 
 //3rd sprint stuff (don't worry about this)
 // Randomized color (might be easy)
@@ -60,29 +61,47 @@ export default {
     created: function() {
         var i;
         var j;
-        for ( i = 7; i >= 0; i--){
-            for ( j = 7; j >= 0; j--){
-                if (i === 7) {
-                    if (j === 0 || j === 7) this.piecesArray[i][j] = "BlackRook";
-                    if (j === 1 || j === 6) this.piecesArray[i][j] = "BlackKnight";
-                    if (j === 2 || j === 5) this.piecesArray[i][j] = "BlackBishop";
-                    if (j === 3) this.piecesArray[i][j] = "BlackQueen";
-                    if (j === 4) this.piecesArray[i][j] = "BlackKing";
-                }
-                if (i === 6){
-                    this.piecesArray[i][j] = "BlackPawn";
-                }
-                if (i === 1){
-                    this.piecesArray[i][j] = "WhitePawn";
-                }
-                if (i === 0){
-                    if (j === 0 || j === 7) this.piecesArray[i][j] = "WhiteRook";
-                    if (j === 1 || j === 6) this.piecesArray[i][j] = "WhiteKnight";
-                    if (j === 2 || j === 5) this.piecesArray[i][j] = "WhiteBishop";
-                    if (j === 3) this.piecesArray[i][j] = "WhiteQueen";
-                    if (j === 4) this.piecesArray[i][j] = "WhiteKing";
+        var rbWhitePieces = ['WhitePawn', 'WhiteKnight', 'WhiteBishop', 'WhiteRook', 'WhiteQueen']
+        var rbBlackPieces = ['BlackPawn', 'BlackKnight', 'BlackBishop', 'BlackRook', 'BlackQueen']
+        if (String(this.$route.params.gameID).charAt(0) === '1'){
+            for ( i = 7; i >= 0; i--){
+                for ( j = 7; j >= 0; j--){
+                    if (i === 7) {
+                        if (j === 0 || j === 7) this.piecesArray[i][j] = "BlackRook";
+                        if (j === 1 || j === 6) this.piecesArray[i][j] = "BlackKnight";
+                        if (j === 2 || j === 5) this.piecesArray[i][j] = "BlackBishop";
+                        if (j === 3) this.piecesArray[i][j] = "BlackQueen";
+                        if (j === 4) this.piecesArray[i][j] = "BlackKing";
+                    }
+                    if (i === 6){
+                        this.piecesArray[i][j] = "BlackPawn";
+                    }
+                    if (i === 1){
+                        this.piecesArray[i][j] = "WhitePawn";
+                    }
+                    if (i === 0){
+                        if (j === 0 || j === 7) this.piecesArray[i][j] = "WhiteRook";
+                        if (j === 1 || j === 6) this.piecesArray[i][j] = "WhiteKnight";
+                        if (j === 2 || j === 5) this.piecesArray[i][j] = "WhiteBishop";
+                        if (j === 3) this.piecesArray[i][j] = "WhiteQueen";
+                        if (j === 4) this.piecesArray[i][j] = "WhiteKing";
+                    }
                 }
             }
+        }
+        else {
+            for ( i = 7; i >= 0; i--){
+                for ( j = 7; j >= 0; j--){
+                    if (i === 7 || i === 6){
+                        this.piecesArray[i][j] = rbBlackPieces[Math.floor(Math.random() * 5)]
+                    }
+                    if (i === 1 || i === 0){
+                        this.piecesArray[i][j] = rbWhitePieces[Math.floor(Math.random() * 5)]
+                    }
+                }
+            }
+            this.piecesArray[7][4] = "BlackKing";
+            this.piecesArray[0][4] = "WhiteKing";
         }
 
         //Joins room upon board being created
