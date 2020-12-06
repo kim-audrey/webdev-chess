@@ -193,7 +193,7 @@ export default {
 
 
         queenLogic: function(startspace,endspace,color){
-            return bishopLogic(startspace, endspace, color) || rookLogic(startspace, endspace, color);
+            return this.bishopLogic(startspace, endspace, color) || this.rookLogic(startspace, endspace, color);
         },
 
         // TODO: how am i supposed to deal with colors? 
@@ -230,7 +230,7 @@ export default {
                 var currXY = [startspace[0], startspace[1]]
                 var endXY = [endspace[0], endspace[1]]
                 var moveIndex = (xMove == 0)? 1 : 0;
-                var moveIncrememnt = (moveIndex == 0)? ((xMove > 0)? 1 : -1) : ((yMove > 0)? 1 : -1);
+                //var moveIncrememnt = (moveIndex == 0)? ((xMove > 0)? 1 : -1) : ((yMove > 0)? 1 : -1);
 
                 while ((currXY[moveIndex] += moveIndex) != endXY[moveIndex]){
                     // if someone's in our spot,
