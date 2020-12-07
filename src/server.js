@@ -12,6 +12,9 @@ const io = socketio(server, {
 
 //respond when the client connects
 io.on("connection", (socket) => {
+    socket.on('roomListRequest',()=>{
+      socket.emit("roomListResponse",io.sockets.adapter.rooms);
+    })
     socket.on('joinRoom', (code) => {
       socket.removeAllListeners("moveEvent");
       socket.leave(socket.room)
