@@ -53,8 +53,7 @@ export default {
   },
   //Way to send things to server (call the function)
   methods: {
-      // when they enter gamecode, redirect them to game/{gamecode}
-      // 
+      // when they enter gamecode, redirect them to game/{gamecode} 
 
 /*
     generateCode(){
@@ -71,6 +70,7 @@ export default {
       // Send the "pingServer" event to the server.
         this.$socket.client.emit('pingServer', 'PING!')
     },
+
     showThatModal() {
         this.showModal = true;
     }

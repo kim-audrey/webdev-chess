@@ -167,22 +167,28 @@ export default {
             switch (pieceIdentity) {
                 case "BlackRook":
                     console.log("Going to Rook Logic");
-                    break;
+                    return this.rookLogic(startspace,endspace,"Black");
+
                 case "WhiteRook":
                     console.log("Going to Rook Logic");
-                    break;
+                    return this.rookLogic(startspace,endspace,"White");
+
                 case "BlackKnight":
                     console.log("Uh oh.");
-                    break;
+                    return this.knightLogic(startspace,endspace,"Black");
+
                 case "WhiteKinght":
                     console.log("Uh oh.");
-                    break;
+                    return this.knightLogic(startspace,endspace,"White");
+
                 case "BlackBishop":
                     console.log("Uh oh.");
-                    break;
+                    return this.bishopLogic(startspace,endspace,"Black");
+
                 case "WhiteBishop":
                     console.log("Uh oh.");
-                    break;
+                    return this.rookLogic(startspace,endspace,"White");
+
                 case "BlackKing":
                     console.log("Going to King Logic");
                     return this.kingLogic(startspace,endspace,pieceIdentity,"Black")
@@ -216,7 +222,6 @@ export default {
             return this.bishopLogic(startspace, endspace, color) || this.rookLogic(startspace, endspace, color);
         },
 
-        // TODO: how am i supposed to deal with colors? 
         knightLogic: function(startspace,endspace,color){
             var xMove = endspace[0] - startspace[0];
             var yMove = endspace[1] - startspace[1];
@@ -225,10 +230,10 @@ export default {
                 // ratio is good, just check that no one is in the way
                 var endSpotPiece = this.piecesArray[endspace[0]][endspace[1]];
                 if(endSpotPiece !== null){       
-                    if(endSpotPiece.color != color) // TODO: make sure that's the right way to check colour
+                    if(endSpotPiece.substring(0,6) === color)
                         return false;
                     else{
-                    // TODO: Capture it
+                        return true;
                     }
                 }
                 return true;                
@@ -237,12 +242,11 @@ export default {
             return false;
         },
 
-        // TODO: how am i supposed to deal with colors? 
         rookLogic: function(startspace,endspace,color){
             var xMove = endspace[0] - startspace[0];
             var yMove = endspace[1] - startspace[1];
 
-            if (xMove == 0 && yMove == 0)    // are they not moving at all?
+            if (xMove == 0 && yMove == 0) 
                 return false;
 
             // if they're moving in one direction, good!
@@ -253,15 +257,16 @@ export default {
                 //var moveIncrememnt = (moveIndex == 0)? ((xMove > 0)? 1 : -1) : ((yMove > 0)? 1 : -1);
 
                 while ((currXY[moveIndex] += moveIndex) != endXY[moveIndex]){
-                    // if someone's in our spot,
                     if(this.piecesArray[currXY[0]][currXY[1]] !== null)
                         return false;
                 }
 
                 // if the spot we (successfully) land on has a piece, capture it. 
                 var endSpotPiece = this.piecesArray[currXY[0]][currXY[1]];
-                if(endSpotPiece !== null && endSpotPiece.color != color){       // TODO: make sure that's the right way to check colour
-                    // TODO: Capture it
+                if(endSpotPiece !== null){
+                    if(endSpotPiece.substring(0,5) != color)
+                        return true;
+                    return false;
                 }
 
                 // if we move in one direction and no pieces are in our path, we're
@@ -271,8 +276,6 @@ export default {
             return false;
         },
 
-
-        // TODO: how am i supposed to deal with colors? 
         bishopLogic: function(startspace,endspace,color){
             var xMove = endspace[0] - startspace[0];
             var yMove = endspace[1] - startspace[1];
@@ -302,8 +305,11 @@ export default {
 
                 // if the spot we (successfully) land on has a piece, capture it. 
                 var endSpotPiece = this.piecesArray[x][y];
-                if(endSpotPiece !== null && endSpotPiece.color != color){       // TODO: make sure that's the right way to check colour
-                    // TODO: Capture it
+                if(endSpotPiece !== null){
+                    if (endSpotPiece.color != color)
+                        return true;
+
+                    return false;
                 }
 
                 // if we move by square value and no pieces are in our path, we're
