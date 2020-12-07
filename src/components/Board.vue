@@ -124,8 +124,8 @@ export default {
             
             if (this.piecesArray[space[0]][space[1]] === null){
                 if (this.startposition !== null){
-                    console.log("Moving piece on to tile!")
-                    this.move(this.startposition, position)
+                    console.log("Calling Logic to move to a tile")
+                    this.logic(this.startposition, position)
                 } else {
                     console.log("Cannot select a tile to start!")
                 }
@@ -141,29 +141,14 @@ export default {
                 }
             else{
                 console.log("Moving piece on to piece")
-                this.move(this.startposition, position)
+                this.logic(this.startposition, position)
             }
             console.log("Piece at " + position)
         },
-        //Move a piece to a different square and remove it from this space,
-        //then pass the turn to the other player.
-        move: function(startposition, endposition){
-            if(this.logic(startposition,endposition)){
-                
-                var startspace = [Number(startposition[0]), Number(startposition[1])]
-                var endspace = [Number(endposition[0]), Number(endposition[1])]
 
-                this.piecesArray[endspace[0]][endspace[1]] = this.piecesArray[startspace[0]][startspace[1]];
-                this.piecesArray[startspace[0]][startspace[1]] = null;
 
-                this.startposition = null;
-                this.turn =! this.turn;
 
-                this.$socket.client.emit('moveEvent', this.piecesArray)
 
-                this.$forceUpdate();
-            }
-        }, 
         logic: function(startposition,endposition){
             //returns whether the move is valid, such as:
             //is the player selecting their own pieces
@@ -182,19 +167,19 @@ export default {
                     return this.rookLogic(startspace,endspace,"White");
 
                 case "BlackKnight":
-                    console.log("Uh oh.");
+                    console.log("Going to Knight Logic")
                     return this.knightLogic(startspace,endspace,"Black");
 
                 case "WhiteKinght":
-                    console.log("Uh oh.");
+                    console.log("Going to Knight Logic")
                     return this.knightLogic(startspace,endspace,"White");
 
                 case "BlackBishop":
-                    console.log("Uh oh.");
+                    console.log("Going to Bishop Logic")
                     return this.bishopLogic(startspace,endspace,"Black");
 
                 case "WhiteBishop":
-                    console.log("Uh oh.");
+                    console.log("Going to Bishop Logic")
                     return this.rookLogic(startspace,endspace,"White");
 
                 case "BlackKing":
@@ -206,11 +191,13 @@ export default {
                     return this.kingLogic(startspace,endspace,pieceIdentity,"White")
                 
                 case "BlackQueen":
-                    console.log("Uh oh.");
-                break;
+                   console.log("Going to Queen Logic")
+                   return this.pawnLogic(startspace,endspace,"Black")
+               
                 case "WhiteQueen":
-                    console.log("Uh oh.");
-                break;
+                    console.log("Going to Queen Logic")
+                    return this.pawnLogic(startspace,endspace,"White")
+                
                 case "BlackPawn":
                     console.log("Going to Pawn Logic");
                     return this.pawnLogic(startspace,endspace,pieceIdentity,"Black")
@@ -219,8 +206,11 @@ export default {
                     return this.pawnLogic(startspace,endspace,pieceIdentity,"White")
                
                default:
-                    console.log("Uhhhhh damn, you weren't supposed to see that");
-                    return false;
+                    console.log("illegal move")
+                    this.startposition = null;
+                    this.endposition = null;
+                    return;
+                   
                 
             }
         },
@@ -232,6 +222,9 @@ export default {
             }
             else{
                 console.log("illegal move")
+                this.startposition = null;
+                this.endposition = null;
+                return;
             }
         },
 
@@ -245,7 +238,9 @@ export default {
                 if(endSpotPiece !== null){       
                     if(endSpotPiece.substring(0,6) === color){
                         console.log("illegal move")
-                        return;
+                    this.startposition = null;
+                    this.endposition = null;
+                    return;
                     }
                     else{
                         this.move(startspace, endspace);
@@ -254,7 +249,10 @@ export default {
                 }
                 this.move(startspace, endspace);                
             }
-            console.log("illegal move")
+           console.log("illegal move")
+                this.startposition = null;
+                this.endposition = null;
+                return;
         },
 
         rookLogic: function(startspace,endspace,color){
@@ -263,6 +261,8 @@ export default {
 
             if (xMove == 0 && yMove == 0){
                 console.log("illegal move")
+                this.startposition = null;
+                this.endposition = null;
                 return;
             } 
 
@@ -276,6 +276,8 @@ export default {
                 while ((currXY[moveIndex] += moveIndex) != endXY[moveIndex]){
                     if(this.piecesArray[currXY[0]][currXY[1]] !== null){
                         console.log("illegal move")
+                        this.startposition = null;
+                        this.endposition = null;
                         return;
                     }
                 }
@@ -289,6 +291,8 @@ export default {
                     }
                     
                     console.log("illegal move")
+                    this.startposition = null;
+                    this.endposition = null;
                     return;
                 }
 
@@ -297,6 +301,9 @@ export default {
             }
 
             console.log("illegal move")
+            this.startposition = null;
+            this.endposition = null
+            return;
         },
 
         bishopLogic: function(startspace,endspace,color){
@@ -304,8 +311,10 @@ export default {
             var yMove = endspace[1] - startspace[1];
 
             if (xMove == 0 && yMove == 0){   // are they not moving at all?
-                console.log("illegal move")
-                return false;
+               console.log("illegal move")
+                this.startposition = null;
+                this.endposition = null;
+                return;
             }
 
             // if they're moving by a square amount, good!
@@ -322,7 +331,9 @@ export default {
 
                 while(x != endspace[0]){        // we chose x arbitrarily since x = y
                     if(this.piecesArray[x][y] !== null){
-                        console.log("illegal move")
+                       console.log("illegal move")
+                        this.startposition = null;
+                        this.endposition = null;
                         return;
                     }
                     x += xDir;
@@ -337,7 +348,9 @@ export default {
                         return;
                     }
                     
-                    console.log("illegal move")
+                   console.log("illegal move")
+                    this.startposition = null;
+                    this.endposition = null;
                     return;
                 }
 
@@ -346,7 +359,10 @@ export default {
                 return;
             }
 
-            console.log("illegal move")
+          console.log("illegal move")
+            this.startposition = null;
+            this.endposition = null;
+            return;
         },
 
         //Black is on top, White is at the bottom
@@ -363,39 +379,53 @@ export default {
                 }
                 if( (7<=(startspace[1]+1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1].substring(0,6)=="White")){
                     if( (endspace[0]==(startspace[0]-1)) && (endspace[1]==(startspace[1]+1)) ){
-                        return true;
+                         this.move(startspace, endspace);
+                        return;
                     }
                     
                 }
                 if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]-1][startspace[1]-1].substring(0,6)=="White")){
                     if( (endspace[0]==(startspace[0]-1)) && (endspace[1]==(startspace[1]-1)) ){
-                        return true;
+                         this.move(startspace, endspace);
+                        return;
                     }
 
                 }
-                return false;
+                console.log("illegal move")
+                this.startposition = null;
+                this.endposition = null;
+                return;
 
             }
             else if (color=="White"){
                 if((this.piecesArray[startspace[0]+1][startspace[1]]===null)){
                     if((endspace[0]==startspace[0]+1)&&(endspace[1]==startspace[1])){
-                        return true;
+                        this.move(startspace, endspace);
+                        return;
                     }
                 }
                 if( (7<=(startspace[1]+1)) && (this.piecesArray[startspace[0]+1][startspace[1]+1].substring(0,6)=="Black")){
                     if((endspace[0]==startspace[0]+1)&&(endspace[1]==(startspace[1]+1))){
-                        return true;
+                       this.move(startspace, endspace);
+                        return;
                     }
                 }
                 if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]+1][startspace[1]-1].substring(0,6)=="Black")){
                     if((endspace[0]==startspace[0]+1)&&(endspace[1]==(startspace[1]-1))){
-                        return true;
+                       this.move(startspace, endspace);
+                        return;
                     }
                 }
-                    return false;
+                console.log("illegal move")
+                this.startposition = null;
+                this.endposition = null;
+                return;
 
             }
-            else{return false;}
+            else{ console.log("illegal move")
+                this.startposition = null;
+                this.endposition = null;
+                return;}
         },
 
          kingLogic: function(startspace,endspace,color){
@@ -412,7 +442,8 @@ export default {
                                 //if it's the space selected
                                 if((endspace[0]==startspace[0]+i)&&(endspace[1]==startspace[1]+j))
                                 {
-                                    return true;
+                                   this.move(startspace, endspace);
+                                    return;
                                 }
                             }
 
@@ -421,6 +452,7 @@ export default {
 
                 }
             }
+            console.log("illegal move")
             return false;
             
         }
@@ -428,6 +460,24 @@ export default {
 
 
     },
+    //Move a piece to a different square and remove it from this space,
+        //then pass the turn to the other player.
+        move: function(startposition, endposition){
+                console.log("In the move function, meaning move was legal")
+                var startspace = [Number(startposition[0]), Number(startposition[1])]
+                var endspace = [Number(endposition[0]), Number(endposition[1])]
+
+                this.piecesArray[endspace[0]][endspace[1]] = this.piecesArray[startspace[0]][startspace[1]];
+                this.piecesArray[startspace[0]][startspace[1]] = null;
+
+                this.startposition = null;
+                this.turn =! this.turn;
+
+                this.$socket.client.emit('moveEvent', this.piecesArray)
+
+                this.$forceUpdate();
+          
+        }, 
     sockets: {
         fullRoom(){
             console.log('full')
