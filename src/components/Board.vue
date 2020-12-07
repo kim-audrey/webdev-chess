@@ -218,7 +218,12 @@ export default {
 
 
         queenLogic: function(startspace,endspace,color){
-            return this.bishopLogic(startspace, endspace, color) || this.rookLogic(startspace, endspace, color);
+            if(this.bishopLogic(startspace, endspace, color) || this.rookLogic(startspace, endspace, color)){
+                this.move(startspace, endspace);
+            }
+            else{
+                console.log("illegal move")
+            }
         },
 
         knightLogic: function(startspace,endspace,color){
@@ -229,24 +234,28 @@ export default {
                 // ratio is good, just check that no one is in the way
                 var endSpotPiece = this.piecesArray[endspace[0]][endspace[1]];
                 if(endSpotPiece !== null){       
-                    if(endSpotPiece.substring(0,6) === color)
-                        return false;
+                    if(endSpotPiece.substring(0,6) === color){
+                        console.log("illegal move")
+                        return;
+                    }
                     else{
-                        return true;
+                        this.move(startspace, endspace);
+                        return;
                     }
                 }
-                return true;                
+                this.move(startspace, endspace);                
             }
-
-            return false;
+            console.log("illegal move")
         },
 
         rookLogic: function(startspace,endspace,color){
             var xMove = endspace[0] - startspace[0];
             var yMove = endspace[1] - startspace[1];
 
-            if (xMove == 0 && yMove == 0) 
-                return false;
+            if (xMove == 0 && yMove == 0){
+                console.log("illegal move")
+                return;
+            } 
 
             // if they're moving in one direction, good!
             if (xMove == 0 || yMove == 0){
@@ -256,31 +265,39 @@ export default {
                 //var moveIncrememnt = (moveIndex == 0)? ((xMove > 0)? 1 : -1) : ((yMove > 0)? 1 : -1);
 
                 while ((currXY[moveIndex] += moveIndex) != endXY[moveIndex]){
-                    if(this.piecesArray[currXY[0]][currXY[1]] !== null)
-                        return false;
+                    if(this.piecesArray[currXY[0]][currXY[1]] !== null){
+                        console.log("illegal move")
+                        return;
+                    }
                 }
 
                 // if the spot we (successfully) land on has a piece, capture it. 
                 var endSpotPiece = this.piecesArray[currXY[0]][currXY[1]];
                 if(endSpotPiece !== null){
-                    if(endSpotPiece.substring(0,5) != color)
-                        return true;
-                    return false;
+                    if(endSpotPiece.substring(0,5) != color){
+                        this.move(startspace, endspace);
+                        return;
+                    }
+                    
+                    console.log("illegal move")
+                    return;
                 }
 
                 // if we move in one direction and no pieces are in our path, we're
-                return true;
+                this.move(startspace, endspace);
             }
 
-            return false;
+            console.log("illegal move")
         },
 
         bishopLogic: function(startspace,endspace,color){
             var xMove = endspace[0] - startspace[0];
             var yMove = endspace[1] - startspace[1];
 
-            if (xMove == 0 && yMove == 0)   // are they not moving at all?
+            if (xMove == 0 && yMove == 0){   // are they not moving at all?
+                console.log("illegal move")
                 return false;
+            }
 
             // if they're moving by a square amount, good!
             if (Math.abs(xMove) == Math.abs(yMove)){
@@ -296,7 +313,8 @@ export default {
 
                 while(x != endspace[0]){        // we chose x arbitrarily since x = y
                     if(this.piecesArray[x][y] !== null){
-                        return false;
+                        console.log("illegal move")
+                        return;
                     }
                     x += xDir;
                     y += yDir;
@@ -305,17 +323,21 @@ export default {
                 // if the spot we (successfully) land on has a piece, capture it. 
                 var endSpotPiece = this.piecesArray[x][y];
                 if(endSpotPiece !== null){
-                    if (endSpotPiece.color != color)
-                        return true;
-
-                    return false;
+                    if (endSpotPiece.color != color){
+                        this.move(startspace, endspace);
+                        return;
+                    }
+                    
+                    console.log("illegal move")
+                    return;
                 }
 
                 // if we move by square value and no pieces are in our path, we're
-                return true;
+                this.move(startspace, endspace);
+                return;
             }
 
-            return false;
+            console.log("illegal move")
         },
 
         //Black is on top, White is at the bottom
@@ -325,7 +347,8 @@ export default {
                 if((this.piecesArray[startspace[0]-1][startspace[1]]===null)){
                     //honestly I thought it just looked cleaner
                     if((endspace[0]==startspace[0]-1)&&(endspace[1]==startspace[1])){
-                        return true;
+                        this.move(startspace, endspace);
+                        return;
                     }
                     
                 }
