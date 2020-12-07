@@ -42,12 +42,6 @@ export default {
 };
 </script>
 
-
-
-
-
-
-
 <style scoped>
 #app{
     position: relative;
@@ -61,23 +55,6 @@ export default {
 
 #title {
     color: blue;
-}
-
-#byline {
-}
-
-
-/* Credit to: https://www.youtube.com/watch?v=VuGRSpy92cI */
-.modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 99;
-
-    width: 100%;
-    background-color: #FFF;
-    border-radius: 16px;
 }
 
 .button {
@@ -98,27 +75,6 @@ export default {
 
     box-shadow: 3px 3px rgba(0,0,0,.4);
     transition: 0.4s ease-out;
-}
-
-.modal-overlay{
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 98;
-    background-color: rgba(0,0,0,0.3);
-}
-
-/* This just like... exists because we have fade */
-.fade-enter-active,
-.fade-leave-active { 
-    transition: opacity 0.5s;
-}
-
-.fade-enter,
-.fade-leave-to {
-    opacity: 0;
 }
 
 #gamecode {
