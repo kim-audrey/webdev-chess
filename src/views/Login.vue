@@ -3,11 +3,13 @@
         <h1 id="title">Chess</h1>
         <p id="byline">By: Yash C. Alex D. Audrey K. Michael P.</p>
 
-        <button class="button" @click="createRoom">Make Your Own Game</button>
+        <button class="button" @click="createChessRoom">Play Chess</button>
+        <button class="button" @click="createRBChessRoom">Play Really Bad Chess</button>
 
         <div id="gamecode">
             <h1>Enter Game Code Here: </h1>
-            <input type="text" placeholder="Game Code">
+            <input v-model="gamecode" type="text" placeholder="Game Code">
+            <button class="button" @click="joinRoom">Join Game!</button>
         </div>
     </div>
 
@@ -16,28 +18,54 @@
 <script>
 export default {
   name: "Login",
-  components: {
-
-  },
   data() {
     return {
-
+        gamecode: "",
+        rb: false
     };
-  },
-  // lifecycle functions
-  mounted () {
-
   },
   //Responses to events sent from the server
   sockets: {
     connect() {
         console.log('receeve')
      },
+    roomListResponse(roomList){
+        if (this.rb){
+            var randomRBCode;
+            do {    
+                randomRBCode = "";
+                for (var i = 0; i < 4; i++){
+                    randomRBCode += String(Math.floor(Math.random() * 10))
+                }
+            } while (roomList.has(String(randomRBCode)))
+            this.$router.push('game/' + randomRBCode);
+        }
+        else {
+            var randomCode;
+            do {    
+                randomCode = "1";
+                for (var j = 0; j < 3; j++){
+                    randomCode += String(Math.floor(Math.random() * 10))
+                }
+            } while (roomList.has(String(randomCode)))
+            this.$router.push('game/' + randomCode);
+        }
+    }
   },
   //Way to send things to server (call the function)
   methods: {
     // when they enter gamecode, redirect them to game/{gamecode} 
-    
+    createChessRoom: function() {
+        this.rb = false;
+        this.$socket.client.emit('roomListRequest');
+    },
+    createRBChessRoom: function() {
+        this.rb = true;
+        this.$socket.client.emit('roomListRequest');
+    },
+    joinRoom: function() {
+
+    }
   }
 };
 </script>
