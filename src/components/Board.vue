@@ -58,12 +58,22 @@ export default {
             startposition: null,
         }
     },
-    created: function() {
-        var i;
-        var j;
-        var rbWhitePieces = ['WhitePawn', 'WhiteKnight', 'WhiteBishop', 'WhiteRook', 'WhiteQueen']
-        var rbBlackPieces = ['BlackPawn', 'BlackKnight', 'BlackBishop', 'BlackRook', 'BlackQueen']
+    mounted: function() {
         if (String(this.$route.params.gameID).charAt(0) === '1'){
+            this.setupChess()
+        }
+        else {
+            this.setupRBChess()
+        }
+
+        //Joins room upon board being created
+        this.$socket.client.emit("joinRoom", this.$route.params.gameID)
+        //Somewhere either here or another function, we should retrieve the chessboard.
+    },
+    methods: {
+        setupChess: function(){
+            var i;
+            var j;
             for ( i = 7; i >= 0; i--){
                 for ( j = 7; j >= 0; j--){
                     if (i === 7) {
@@ -88,8 +98,12 @@ export default {
                     }
                 }
             }
-        }
-        else {
+        },
+        setupRBChess: function(){  
+            var i;
+            var j;
+            var rbWhitePieces = ['WhitePawn', 'WhiteKnight', 'WhiteBishop', 'WhiteRook', 'WhiteQueen']
+            var rbBlackPieces = ['BlackPawn', 'BlackKnight', 'BlackBishop', 'BlackRook', 'BlackQueen']
             for ( i = 7; i >= 0; i--){
                 for ( j = 7; j >= 0; j--){
                     if (i === 7 || i === 6){
@@ -102,13 +116,7 @@ export default {
             }
             this.piecesArray[7][4] = "BlackKing";
             this.piecesArray[0][4] = "WhiteKing";
-        }
-
-        //Joins room upon board being created
-        this.$socket.client.emit("joinRoom", this.$route.params.gameID)
-        //Somewhere either here or another function, we should retrieve the chessboard.
-    },
-    methods: {
+        },
         //When a tile is clicked while a piece is selected, delete the piece at the old position,
         //move it to the new position, store the new board, and send it to the opponent.
         tileSelection: function(position) {
@@ -141,18 +149,19 @@ export default {
         //then pass the turn to the other player.
         move: function(startposition, endposition){
             if(this.logic(startposition,endposition)){
-            var startspace = [Number(startposition[0]), Number(startposition[1])]
-            var endspace = [Number(endposition[0]), Number(endposition[1])]
+                
+                var startspace = [Number(startposition[0]), Number(startposition[1])]
+                var endspace = [Number(endposition[0]), Number(endposition[1])]
 
-            this.piecesArray[endspace[0]][endspace[1]] = this.piecesArray[startspace[0]][startspace[1]];
-            this.piecesArray[startspace[0]][startspace[1]] = null;
+                this.piecesArray[endspace[0]][endspace[1]] = this.piecesArray[startspace[0]][startspace[1]];
+                this.piecesArray[startspace[0]][startspace[1]] = null;
 
-            this.startposition = null;
-            this.turn =! this.turn;
+                this.startposition = null;
+                this.turn =! this.turn;
 
-            this.$socket.client.emit('moveEvent', this.piecesArray)
+                this.$socket.client.emit('moveEvent', this.piecesArray)
 
-            this.$forceUpdate();
+                this.$forceUpdate();
             }
         }, 
         logic: function(startposition,endposition){
@@ -192,7 +201,7 @@ export default {
                     console.log("Going to King Logic");
                     return this.kingLogic(startspace,endspace,pieceIdentity,"Black")
                
-                 case "WhiteKing":
+                case "WhiteKing":
                     console.log("Going to King Logic");
                     return this.kingLogic(startspace,endspace,pieceIdentity,"White")
                 
