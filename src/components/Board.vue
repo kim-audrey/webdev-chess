@@ -145,9 +145,24 @@ export default {
             }
             console.log("Piece at " + position)
         },
+        //Move a piece to a different square and remove it from this space,
+        //then pass the turn to the other player.
+        move: function(startposition, endposition){
+                console.log("In the move function, meaning move was legal")
+                var startspace = [Number(startposition[0]), Number(startposition[1])]
+                var endspace = [Number(endposition[0]), Number(endposition[1])]
 
+                this.piecesArray[endspace[0]][endspace[1]] = this.piecesArray[startspace[0]][startspace[1]];
+                this.piecesArray[startspace[0]][startspace[1]] = null;
 
+                this.startposition = null;
+                this.turn =! this.turn;
 
+                this.$socket.client.emit('moveEvent', this.piecesArray)
+
+                this.$forceUpdate();
+          
+        }, 
 
         logic: function(startposition,endposition){
             //returns whether the move is valid, such as:
@@ -184,11 +199,11 @@ export default {
 
                 case "BlackKing":
                     console.log("Going to King Logic");
-                    return this.kingLogic(startspace,endspace,pieceIdentity,"Black")
+                    return this.kingLogic(startspace,endspace,"Black")
                
                 case "WhiteKing":
                     console.log("Going to King Logic");
-                    return this.kingLogic(startspace,endspace,pieceIdentity,"White")
+                    return this.kingLogic(startspace,endspace,"White")
                 
                 case "BlackQueen":
                    console.log("Going to Queen Logic")
@@ -200,10 +215,10 @@ export default {
                 
                 case "BlackPawn":
                     console.log("Going to Pawn Logic");
-                    return this.pawnLogic(startspace,endspace,pieceIdentity,"Black")
+                    return this.pawnLogic(startspace,endspace,"Black")
                 case "WhitePawn":
                     console.log("Going to Pawn Logic");
-                    return this.pawnLogic(startspace,endspace,pieceIdentity,"White")
+                    return this.pawnLogic(startspace,endspace,"White")
                
                default:
                     console.log("illegal move")
@@ -368,6 +383,7 @@ export default {
         //Black is on top, White is at the bottom
         pawnLogic: function(startspace,endspace,color){
             if (color=="Black"){
+                console.log("is Black pawn")
 
                 if((this.piecesArray[startspace[0]-1][startspace[1]]===null)){
                     //honestly I thought it just looked cleaner
@@ -377,14 +393,16 @@ export default {
                     }
                     
                 }
-                if( (7<=(startspace[1]+1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1].substring(0,6)=="White")){
+                
+                if( (7<=(startspace[1]+1)) &&(this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&& (this.piecesArray[startspace[0]-1][startspace[1]+1].props.PieceType.substring(0,6)=="White")){
                     if( (endspace[0]==(startspace[0]-1)) && (endspace[1]==(startspace[1]+1)) ){
                          this.move(startspace, endspace);
                         return;
                     }
                     
                 }
-                if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]-1][startspace[1]-1].substring(0,6)=="White")){
+                console.log(this.piecesArray[startspace[0]-1][startspace[1]+1])
+                if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]-1][startspace[1]-1].props.PieceType.substring(0,6)=="White")){
                     if( (endspace[0]==(startspace[0]-1)) && (endspace[1]==(startspace[1]-1)) ){
                          this.move(startspace, endspace);
                         return;
@@ -398,19 +416,20 @@ export default {
 
             }
             else if (color=="White"){
+                console.log("is White pawn")
                 if((this.piecesArray[startspace[0]+1][startspace[1]]===null)){
                     if((endspace[0]==startspace[0]+1)&&(endspace[1]==startspace[1])){
                         this.move(startspace, endspace);
                         return;
                     }
                 }
-                if( (7<=(startspace[1]+1)) && (this.piecesArray[startspace[0]+1][startspace[1]+1].substring(0,6)=="Black")){
+                if( (7<=(startspace[1]+1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]+1][startspace[1]+1].props.PieceType.substring(0,6)=="Black")){
                     if((endspace[0]==startspace[0]+1)&&(endspace[1]==(startspace[1]+1))){
                        this.move(startspace, endspace);
                         return;
                     }
                 }
-                if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]+1][startspace[1]-1].substring(0,6)=="Black")){
+                if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]+1][startspace[1]-1].props.PieceType.substring(0,6)=="Black")){
                     if((endspace[0]==startspace[0]+1)&&(endspace[1]==(startspace[1]-1))){
                        this.move(startspace, endspace);
                         return;
@@ -436,7 +455,7 @@ export default {
                     //if in bounds
                     if((7<=startspace[1]+j)&&(0>=startspace[1]+j)&&(7<=startspace[0]+i)&&(0>=startspace[0]+i)){
                         //if space is not occupied by teammate
-                        if(this.piecesArray[startspace[0]+i][startspace[1]+j]!=color){
+                        if(this.piecesArray[startspace[0]+i][startspace[1]+j].props.PieceType.substring(0,6)!=color){
                             //not skip turn check
                             if(!(i==0&&j==0)){
                                 //if it's the space selected
@@ -460,24 +479,7 @@ export default {
 
 
     },
-    //Move a piece to a different square and remove it from this space,
-        //then pass the turn to the other player.
-        move: function(startposition, endposition){
-                console.log("In the move function, meaning move was legal")
-                var startspace = [Number(startposition[0]), Number(startposition[1])]
-                var endspace = [Number(endposition[0]), Number(endposition[1])]
-
-                this.piecesArray[endspace[0]][endspace[1]] = this.piecesArray[startspace[0]][startspace[1]];
-                this.piecesArray[startspace[0]][startspace[1]] = null;
-
-                this.startposition = null;
-                this.turn =! this.turn;
-
-                this.$socket.client.emit('moveEvent', this.piecesArray)
-
-                this.$forceUpdate();
-          
-        }, 
+    
     sockets: {
         fullRoom(){
             console.log('full')
