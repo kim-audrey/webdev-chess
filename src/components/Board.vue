@@ -141,18 +141,19 @@ export default {
         //then pass the turn to the other player.
         move: function(startposition, endposition){
             if(this.logic(startposition,endposition)){
-            var startspace = [Number(startposition[0]), Number(startposition[1])]
-            var endspace = [Number(endposition[0]), Number(endposition[1])]
+                
+                var startspace = [Number(startposition[0]), Number(startposition[1])]
+                var endspace = [Number(endposition[0]), Number(endposition[1])]
 
-            this.piecesArray[endspace[0]][endspace[1]] = this.piecesArray[startspace[0]][startspace[1]];
-            this.piecesArray[startspace[0]][startspace[1]] = null;
+                this.piecesArray[endspace[0]][endspace[1]] = this.piecesArray[startspace[0]][startspace[1]];
+                this.piecesArray[startspace[0]][startspace[1]] = null;
 
-            this.startposition = null;
-            this.turn =! this.turn;
+                this.startposition = null;
+                this.turn =! this.turn;
 
-            this.$socket.client.emit('moveEvent', this.piecesArray)
+                this.$socket.client.emit('moveEvent', this.piecesArray)
 
-            this.$forceUpdate();
+                this.$forceUpdate();
             }
         }, 
         logic: function(startposition,endposition){
@@ -186,7 +187,7 @@ export default {
                     console.log("Going to King Logic");
                     return this.kingLogic(startspace,endspace,pieceIdentity,"Black")
                
-                 case "WhiteKing":
+                case "WhiteKing":
                     console.log("Going to King Logic");
                     return this.kingLogic(startspace,endspace,pieceIdentity,"White")
                 
