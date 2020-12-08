@@ -183,7 +183,7 @@ export default {
                     this.startposition = null;
                     this.endposition = null;
                     return;
-            }else{
+            } else{
 
 
             switch (pieceIdentity) {
@@ -196,19 +196,19 @@ export default {
                     return this.rookLogic(startspace,endspace,"White");
 
                 case "BlackKnight":
-                    console.log("Going to Knight Logic")
+                    console.log("Going to Knight Logic");
                     return this.knightLogic(startspace,endspace,"Black");
 
                 case "WhiteKnight":
-                    console.log("Going to Knight Logic")
+                    console.log("Going to Knight Logic");
                     return this.knightLogic(startspace,endspace,"White");
 
                 case "BlackBishop":
-                    console.log("Going to Bishop Logic")
+                    console.log("Going to Bishop Logic");
                     return this.bishopLogic(startspace,endspace,"Black");
 
                 case "WhiteBishop":
-                    console.log("Going to Bishop Logic")
+                    console.log("Going to Bishop Logic");
                     return this.rookLogic(startspace,endspace,"White");
 
                 case "BlackKing":
@@ -220,11 +220,11 @@ export default {
                     return this.kingLogic(startspace,endspace,"White")
                 
                 case "BlackQueen":
-                   console.log("Going to Queen Logic")
+                   console.log("Going to Queen Logic");
                    return this.pawnLogic(startspace,endspace,"Black")
                
                 case "WhiteQueen":
-                    console.log("Going to Queen Logic")
+                    console.log("Going to Queen Logic");
                     return this.pawnLogic(startspace,endspace,"White")
                 
                 case "BlackPawn":
@@ -239,8 +239,6 @@ export default {
                     this.startposition = null;
                     this.endposition = null;
                     return;
-                   
-                
             }
             }
         },
@@ -258,22 +256,30 @@ export default {
             }
         },
 
+
         knightLogic: function(startspace,endspace,color){
             if((color=="Black")&&(this.turn)||((color=="White")&&(!this.turn))){
-                 this.startposition = null;
+                this.startposition = null;
                 this.endposition = null;
                 return;
-             }
+            }
+
+            if(startspace===endspace){
+                 console.log("illegal move -- no movement")
+                this.startposition = null;
+                this.endposition = null;
+                return;
+            }
+
             var xMove = endspace[0] - startspace[0];
             var yMove = endspace[1] - startspace[1];
-            // if(xMove<0){xMove=xMove*-1}
-            // if(yMove<0){yMove=yMove*-1}
+
             if ( ( ((Math.abs(xMove) ==2 )) && (Math.abs(yMove)==1) ) || ( (Math.abs(xMove)==1) && (Math.abs(yMove)==2) )){
                 // ratio is good, just check that no one is in the way
                 var endSpotPiece = this.piecesArray[endspace[0]][endspace[1]];
                 if(endSpotPiece != null){       
                     if(endSpotPiece.substring(0,5) === color){
-                        console.log("illegal move")
+                        console.log("illegal move -- piece is already there")
                         this.startposition = null;
                         this.endposition = null;
                         return;
@@ -287,18 +293,19 @@ export default {
                 this.move(startspace, endspace);       
                 return;         
             }
-           console.log("illegal move")
+           console.log("illegal move -- bad movement")
                 this.startposition = null;
                 this.endposition = null;
                 return;
         },
+
 
         rookLogic: function(startspace,endspace,color){
             var xMove = endspace[0] - startspace[0];
             var yMove = endspace[1] - startspace[1];
 
             if (xMove == 0 && yMove == 0){
-                console.log("illegal move")
+                console.log("illegal move -- no movement")
                 this.startposition = null;
                 this.endposition = null;
                 return;
@@ -309,11 +316,11 @@ export default {
                 var currXY = [startspace[0], startspace[1]]
                 var endXY = [endspace[0], endspace[1]]
                 var moveIndex = (xMove == 0)? 1 : 0;
-                //var moveIncrememnt = (moveIndex == 0)? ((xMove > 0)? 1 : -1) : ((yMove > 0)? 1 : -1);
+                var moveIncrememnt = (moveIndex == 0)? ((xMove > 0)? 1 : -1) : ((yMove > 0)? 1 : -1);
 
-                while ((currXY[moveIndex] += moveIndex) != endXY[moveIndex]){
+                while ((currXY[moveIndex] += moveIncrememnt) != endXY[moveIndex]){
                     if(this.piecesArray[currXY[0]][currXY[1]] !== null){
-                        console.log("illegal move")
+                        console.log("illegal move -- piece is in the way")
                         this.startposition = null;
                         this.endposition = null;
                         return;
@@ -324,11 +331,12 @@ export default {
                 var endSpotPiece = this.piecesArray[currXY[0]][currXY[1]];
                 if(endSpotPiece !== null){
                     if(endSpotPiece.substring(0,5) != color){
+                        console.log("capture")
                         this.move(startspace, endspace);
                         return;
                     }
                     
-                    console.log("illegal move")
+                    console.log("illegal move -- piece is already there")
                     this.startposition = null;
                     this.endposition = null;
                     return;
@@ -338,18 +346,27 @@ export default {
                 this.move(startspace, endspace);
             }
 
-            console.log("illegal move")
+            console.log("illegal move -- bad movement")
             this.startposition = null;
             this.endposition = null
             return;
         },
 
+
         bishopLogic: function(startspace,endspace,color){
+
+            if(startspace===endspace){
+                 console.log("illegal move -- no movement")
+                this.startposition = null;
+                this.endposition = null;
+                return;
+            }
+
             var xMove = endspace[0] - startspace[0];
             var yMove = endspace[1] - startspace[1];
 
             if (xMove == 0 && yMove == 0){   // are they not moving at all?
-               console.log("illegal move")
+               console.log("illegal move -- bad movement")
                 this.startposition = null;
                 this.endposition = null;
                 return;
@@ -357,10 +374,6 @@ export default {
 
             // if they're moving by a square amount, good!
             if (Math.abs(xMove) == Math.abs(yMove)){
-                
-                // are there any pieces in the way? :
-
-                // directions pieces move in
                 var xDir = (xMove > 0)? 1 : -1;
                 var yDir = (yMove > 0)? 1 : -1;
 
@@ -369,7 +382,7 @@ export default {
 
                 while(x != endspace[0]){        // we chose x arbitrarily since x = y
                     if(this.piecesArray[x][y] !== null){
-                       console.log("illegal move")
+                       console.log("illegal move -- piece is in the way")
                         this.startposition = null;
                         this.endposition = null;
                         return;
@@ -382,11 +395,12 @@ export default {
                 var endSpotPiece = this.piecesArray[x][y];
                 if(endSpotPiece !== null){
                     if (endSpotPiece.color != color){
+                        console.log("capture")
                         this.move(startspace, endspace);
                         return;
                     }
                     
-                   console.log("illegal move")
+                   console.log("illegal move -- piece is already there")
                     this.startposition = null;
                     this.endposition = null;
                     return;
@@ -397,16 +411,17 @@ export default {
                 return;
             }
 
-          console.log("illegal move")
+          console.log("illegal move -- bad movement")
             this.startposition = null;
             this.endposition = null;
             return;
         },
 
+
         //Black is on top, White is at the bottom
         pawnLogic: function(startspace,endspace,color){
             if(startspace===endspace){
-                 console.log("illegal move")
+                 console.log("illegal move -- no movement")
                 this.startposition = null;
                 this.endposition = null;
                 return;
