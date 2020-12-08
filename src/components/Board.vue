@@ -186,6 +186,7 @@ export default {
       this.startposition = null;
       this, (endposition = null);
       this.turn = !this.turn;
+     
 
       this.$socket.client.emit("moveEvent", this.piecesArray);
 
@@ -199,20 +200,19 @@ export default {
       var startspace = [Number(startposition[0]), Number(startposition[1])];
       var endspace = [Number(endposition[0]), Number(endposition[1])];
       var pieceIdentity = this.piecesArray[startspace[0]][startspace[1]];
-
-      console.log(this.color);
-      console.log(this.turn);
-      if (
-        !this.turn ||
-        pieceIdentity.substring(0, 5) != this.color ||
-        this.piecesArray[endspace[0]][endspace[1]].substring(0, 5) ===
-          this.color
-      ) {
+      
+    console.log(this.color)
+    console.log(this.turn)
+      if ((!this.turn)||(pieceIdentity.substring(0,5)!=this.color)||(this.piecesArray[endspace[0]][endspace[1]].substring(0,5)===this.color)) {
         console.log("illegal move");
         this.startposition = null;
         this.endposition = null;
         return;
-      } else {
+      
+      } 
+      
+
+      else {
         switch (pieceIdentity) {
           case "BlackRook":
             //console.log("Going to Rook Logic");
@@ -454,6 +454,7 @@ export default {
         return;
       }
       if (color == "Black") {
+        
         if (this.piecesArray[startspace[0] - 1][startspace[1]] === null) {
           //honestly I thought it just looked cleaner
           if (
@@ -468,10 +469,7 @@ export default {
         if (
           7 >= startspace[1] + 1 &&
           this.piecesArray[startspace[0] - 1][startspace[1] + 1] !== null &&
-          this.piecesArray[startspace[0] - 1][startspace[1] + 1].substring(
-            0,
-            5
-          ) === "White"
+          this.piecesArray[startspace[0] - 1][startspace[1] + 1].substring(0,5) === "White"
         ) {
           if (
             endspace[0] == startspace[0] - 1 &&
@@ -485,10 +483,7 @@ export default {
         if (
           0 <= startspace[1] - 1 &&
           this.piecesArray[startspace[0] - 1][startspace[1] - 1] != null &&
-          this.piecesArray[startspace[0] - 1][startspace[1] - 1].substring(
-            0,
-            5
-          ) == "White"
+          this.piecesArray[startspace[0] - 1][startspace[1] - 1].substring(0, 5) == "White"
         ) {
           if (
             endspace[0] == startspace[0] - 1 &&
@@ -503,6 +498,8 @@ export default {
         this.endposition = null;
         return;
       } else if (color == "White") {
+        
+
         if (this.piecesArray[startspace[0] + 1][startspace[1]] === null) {
           if (
             endspace[0] == startspace[0] + 1 &&
@@ -522,10 +519,7 @@ export default {
         if (
           7 >= startspace[1] + 1 &&
           this.piecesArray[startspace[0] + 1][startspace[1] + 1] != null &&
-          this.piecesArray[startspace[0] + 1][startspace[1] + 1].substring(
-            0,
-            5
-          ) == "Black"
+          this.piecesArray[startspace[0] + 1][startspace[1] + 1].substring( 0, 5) == "Black"
         ) {
           if (
             endspace[0] == startspace[0] + 1 &&
@@ -538,10 +532,7 @@ export default {
         if (
           0 <= startspace[1] - 1 &&
           this.piecesArray[startspace[0] + 1][startspace[1] - 1] != null &&
-          this.piecesArray[startspace[0] + 1][startspace[1] - 1].substring(
-            0,
-            5
-          ) == "Black"
+          this.piecesArray[startspace[0] + 1][startspace[1] - 1].substring( 0,5) == "Black"
         ) {
           if (
             endspace[0] == startspace[0] + 1 &&
@@ -620,7 +611,7 @@ export default {
     },
     moveResponse(recievedArray) {
       this.piecesArray = recievedArray;
-      this.turn = !this.turn;
+      this.turn=!this.turn;
       this.$forceUpdate();
     },
     getColor() {
