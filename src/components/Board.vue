@@ -50,6 +50,7 @@
 //Add movement logic
 //CHESS LOGIC
 // host it!
+//Make sure taking pieces and not taking your own pieces works
 
 //3rd sprint stuff (don't worry about this)
 // Switch board direction
@@ -186,7 +187,6 @@ export default {
       this.startposition = null;
       this, (endposition = null);
       this.turn = !this.turn;
-      console.log("hahahahahahaha")
 
       this.$socket.client.emit("moveEvent", this.piecesArray);
 
