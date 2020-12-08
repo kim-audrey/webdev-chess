@@ -157,9 +157,12 @@ export default {
                 this.piecesArray[startspace[0]][startspace[1]] = null;
 
                 this.startposition = null;
+                this,endposition =null;
                 this.turn =! this.turn;
+                
 
                 this.$socket.client.emit('moveEvent', this.piecesArray)
+                
 
                 this.$forceUpdate();
           
@@ -172,21 +175,19 @@ export default {
             var startspace = [Number(startposition[0]), Number(startposition[1])]
             var endspace = [Number(endposition[0]), Number(endposition[1])]
             var pieceIdentity= this.piecesArray[startspace[0]][startspace[1]];
-            console.log(this.turn);
-            console.log(pieceIdentity.substring(0,5));
-            if ((pieceIdentity.substring(0,5)=="White"&&!this.turn)||(pieceIdentity.substring(0,6)=="Black"&&this.turn)){
-                console.log("illegal move")
+            
+            if (((pieceIdentity.substring(0,5)=="White")&&(!this.turn))||(pieceIdentity.substring(0,6)=="Black"&&this.turn)){
+                    console.log("illegal move")
                     this.startposition = null;
                     this.endposition = null;
                     return;
-            }
+            }else{
+
 
             switch (pieceIdentity) {
                 case ("BlackRook"):
                     console.log("Going to Rook Logic");
                     return this.rookLogic(startspace,endspace,"Black");
-                        
-                    
 
                 case "WhiteRook":
                     console.log("Going to Rook Logic");
@@ -238,6 +239,7 @@ export default {
                     return;
                    
                 
+            }
             }
         },
 
@@ -393,8 +395,20 @@ export default {
 
         //Black is on top, White is at the bottom
         pawnLogic: function(startspace,endspace,color){
-            if (color=="Black"){
-                console.log("is Black pawn")
+            if(startspace===endspace){
+                 console.log("illegal move")
+                this.startposition = null;
+                this.endposition = null;
+                return;
+            }
+            if ((color=="Black")){
+                if(this.turn){
+                    console.log("illegal move")
+                this.startposition = null;
+                this.endposition = null;
+                return;
+                }
+                
 
                 if((this.piecesArray[startspace[0]-1][startspace[1]]===null)){
                     //honestly I thought it just looked cleaner
@@ -405,15 +419,14 @@ export default {
                     
                 }
                 
-                if( (7<=(startspace[1]+1)) &&(this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&& (this.piecesArray[startspace[0]-1][startspace[1]+1].substring(0,5)=="White")){
-                    if( (endspace[0]==(startspace[0]-1)) && (endspace[1]==(startspace[1]+1)) ){
+               
+                 if( (7>=(startspace[1]+1)) &&(this.piecesArray[startspace[0]-1][startspace[1]+1]!==null)&& (this.piecesArray[startspace[0]-1][startspace[1]+1].substring(0,5)==="White")){
+                        if((endspace[0]==startspace[0]-1) && (endspace[1]==startspace[1]+1) ){
                          this.move(startspace, endspace);
                         return;
-                    }
-                    
-                }
-                console.log(this.piecesArray[startspace[0]-1][startspace[1]+1])
-                if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]-1][startspace[1]-1].substring(0,5)=="White")){
+                }}
+               
+                if( (0<=(startspace[1]-1)) && (this.piecesArray[startspace[0]-1][startspace[1]-1]!=null)&&(this.piecesArray[startspace[0]-1][startspace[1]-1].substring(0,5)=="White")){
                     if( (endspace[0]==(startspace[0]-1)) && (endspace[1]==(startspace[1]-1)) ){
                          this.move(startspace, endspace);
                         return;
@@ -427,20 +440,29 @@ export default {
 
             }
             else if (color=="White"){
-                console.log("is White pawn")
+                if(!this.turn){
+                    console.log("illegal move")
+                    this.startposition = null;
+                    this.endposition = null;
+                    return;
+                }
+               
                 if((this.piecesArray[startspace[0]+1][startspace[1]]===null)){
                     if((endspace[0]==startspace[0]+1)&&(endspace[1]==startspace[1])){
                         this.move(startspace, endspace);
                         return;
                     }
                 }
-                if( (7<=(startspace[1]+1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]+1][startspace[1]+1].substring(0,5)=="Black")){
+                console.log(this.piecesArray[startspace[0]-1][startspace[1]+1]+ "is diagonally right")
+                console.log( (startspace[1]+1)+","+(7>=(startspace[1]+1)) + "logic gate" )
+                if( (7>=(startspace[1]+1)) && (this.piecesArray[startspace[0]+1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]+1][startspace[1]+1].substring(0,5)=="Black")){
+                    console.log("In capture condition")
                     if((endspace[0]==startspace[0]+1)&&(endspace[1]==(startspace[1]+1))){
                        this.move(startspace, endspace);
                         return;
                     }
                 }
-                if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]+1][startspace[1]-1].substring(0,5)=="Black")){
+                if( (0<=(startspace[1]-1)) && (this.piecesArray[startspace[0]+1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]+1][startspace[1]-1].substring(0,5)=="Black")){
                     if((endspace[0]==startspace[0]+1)&&(endspace[1]==(startspace[1]-1))){
                        this.move(startspace, endspace);
                         return;
