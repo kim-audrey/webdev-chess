@@ -12,6 +12,7 @@
       <h1>Enter Game Code Here:</h1>
       <input v-model="gamecode" type="text" placeholder="Game Code" />
       <button class="button" @click="joinRoom">Join Game!</button>
+      <h2 id="error" v-if="error">Error! Invalid Gamecode!</h2>
     </div>
   </div>
 </template>
@@ -23,6 +24,7 @@ export default {
     return {
       gamecode: "",
       rb: false,
+      error: false
     };
   },
   //Responses to events sent from the server
@@ -73,7 +75,13 @@ export default {
       this.$socket.client.emit("roomListRequest");
     },
     joinRoom: function () {
-      this.$router.push("game/" + this.gamecode);
+      if(!isNaN(this.gamecode)){
+        this.error = false;
+        this.$router.push("game/" + this.gamecode);
+      } 
+      else {
+        this.error = true;
+      }
     },
   },
 };
@@ -92,6 +100,10 @@ export default {
 
 #title {
   color: blue;
+}
+
+#error {
+  color: red;
 }
 
 .button {
