@@ -98,6 +98,7 @@ export default {
                     }
                 }
             }
+            this.turn=true
         },
         setupRBChess: function(){  
             var i;
@@ -171,11 +172,21 @@ export default {
             var startspace = [Number(startposition[0]), Number(startposition[1])]
             var endspace = [Number(endposition[0]), Number(endposition[1])]
             var pieceIdentity= this.piecesArray[startspace[0]][startspace[1]];
+            console.log(this.turn);
+            console.log(pieceIdentity.substring(0,5));
+            if ((pieceIdentity.substring(0,5)=="White"&&!this.turn)||(pieceIdentity.substring(0,6)=="Black"&&this.turn)){
+                console.log("illegal move")
+                    this.startposition = null;
+                    this.endposition = null;
+                    return;
+            }
 
             switch (pieceIdentity) {
-                case "BlackRook":
+                case ("BlackRook"):
                     console.log("Going to Rook Logic");
                     return this.rookLogic(startspace,endspace,"Black");
+                        
+                    
 
                 case "WhiteRook":
                     console.log("Going to Rook Logic");
@@ -251,7 +262,7 @@ export default {
                 // ratio is good, just check that no one is in the way
                 var endSpotPiece = this.piecesArray[endspace[0]][endspace[1]];
                 if(endSpotPiece !== null){       
-                    if(endSpotPiece.substring(0,6) === color){
+                    if(endSpotPiece.substring(0,5) === color){
                         console.log("illegal move")
                     this.startposition = null;
                     this.endposition = null;
@@ -394,7 +405,7 @@ export default {
                     
                 }
                 
-                if( (7<=(startspace[1]+1)) &&(this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&& (this.piecesArray[startspace[0]-1][startspace[1]+1].props.PieceType.substring(0,6)=="White")){
+                if( (7<=(startspace[1]+1)) &&(this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&& (this.piecesArray[startspace[0]-1][startspace[1]+1].substring(0,5)=="White")){
                     if( (endspace[0]==(startspace[0]-1)) && (endspace[1]==(startspace[1]+1)) ){
                          this.move(startspace, endspace);
                         return;
@@ -402,7 +413,7 @@ export default {
                     
                 }
                 console.log(this.piecesArray[startspace[0]-1][startspace[1]+1])
-                if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]-1][startspace[1]-1].props.PieceType.substring(0,6)=="White")){
+                if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]-1][startspace[1]-1].substring(0,5)=="White")){
                     if( (endspace[0]==(startspace[0]-1)) && (endspace[1]==(startspace[1]-1)) ){
                          this.move(startspace, endspace);
                         return;
@@ -423,13 +434,13 @@ export default {
                         return;
                     }
                 }
-                if( (7<=(startspace[1]+1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]+1][startspace[1]+1].props.PieceType.substring(0,6)=="Black")){
+                if( (7<=(startspace[1]+1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]+1][startspace[1]+1].substring(0,5)=="Black")){
                     if((endspace[0]==startspace[0]+1)&&(endspace[1]==(startspace[1]+1))){
                        this.move(startspace, endspace);
                         return;
                     }
                 }
-                if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]+1][startspace[1]-1].props.PieceType.substring(0,6)=="Black")){
+                if( (0>=(startspace[1]-1)) && (this.piecesArray[startspace[0]-1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]+1][startspace[1]-1].substring(0,5)=="Black")){
                     if((endspace[0]==startspace[0]+1)&&(endspace[1]==(startspace[1]-1))){
                        this.move(startspace, endspace);
                         return;
@@ -455,7 +466,7 @@ export default {
                     //if in bounds
                     if((7<=startspace[1]+j)&&(0>=startspace[1]+j)&&(7<=startspace[0]+i)&&(0>=startspace[0]+i)){
                         //if space is not occupied by teammate
-                        if(this.piecesArray[startspace[0]+i][startspace[1]+j].props.PieceType.substring(0,6)!=color){
+                        if(this.piecesArray[startspace[0]+i][startspace[1]+j].substring(0,5)!=color){
                             //not skip turn check
                             if(!(i==0&&j==0)){
                                 //if it's the space selected
