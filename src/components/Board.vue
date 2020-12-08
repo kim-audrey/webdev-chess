@@ -482,7 +482,7 @@ export default {
                         return;
                     }
                 }
-                if( (0<=(startspace[1]-1)) && (this.piecesArray[startspace[0]+1][startspace[1]+1]!=null)&&(this.piecesArray[startspace[0]+1][startspace[1]-1].substring(0,5)=="Black")){
+                if( (0<=(startspace[1]-1)) && (this.piecesArray[startspace[0]+1][startspace[1]-1]!=null)&&(this.piecesArray[startspace[0]+1][startspace[1]-1].substring(0,5)=="Black")){
                     if((endspace[0]==startspace[0]+1)&&(endspace[1]==(startspace[1]-1))){
                        this.move(startspace, endspace);
                         return;
