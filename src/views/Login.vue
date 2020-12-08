@@ -10,6 +10,8 @@
 
     <div id="gamecode">
       <h1>Enter Game Code Here:</h1>
+      <!-- v-model means that vue .js will make gamecode whatever the user inputs
+      (look at data in the script)-->
       <input v-model="gamecode" type="text" placeholder="Game Code" />
       <button class="button" @click="joinRoom">Join Game!</button>
       <h2 id="error" v-if="error">Error! Invalid Gamecode!</h2>
@@ -20,6 +22,7 @@
 <script>
 export default {
   name: "Login",
+  // initialilse all the variables you'll be using throughout Vue in data()
   data() {
     return {
       gamecode: "",
@@ -68,7 +71,13 @@ export default {
     // when they enter gamecode, redirect them to game/{gamecode}
     createChessRoom: function () {
       this.rb = false;
+      // dollar sign in front of variable usually means it's not part of data or variable, it's a higher level thing
+      // it's calling functions from /main.js/VueSocketIO
+      // this line sends an event to the server.js and look at line 15 on that file
       this.$socket.client.emit("roomListRequest");
+      // then from this line, server  runs roomListResponse function (in sockets) and the in it, calls
+      // Login.Vue -> roomListResponse in our sockets
+      // FLOW: button --> Login.vue methods --> server.js sockets --> Login.vue sockets
     },
     createRBChessRoom: function () {
       this.rb = true;
@@ -77,6 +86,8 @@ export default {
     joinRoom: function () {
       if (!isNaN(this.gamecode)) {
         this.error = false;
+        // this.$router goes to /router/index.js 
+        // she says: "put game/ on the url that we're currently in" or kind of just like reroute to our correct place
         this.$router.push("game/" + this.gamecode);
       } else {
         this.error = true;
