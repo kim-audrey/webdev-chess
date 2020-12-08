@@ -24,7 +24,7 @@ export default {
     return {
       gamecode: "",
       rb: false,
-      error: false
+      error: false,
     };
   },
   //Responses to events sent from the server
@@ -75,11 +75,10 @@ export default {
       this.$socket.client.emit("roomListRequest");
     },
     joinRoom: function () {
-      if(!isNaN(this.gamecode)){
+      if (!isNaN(this.gamecode)) {
         this.error = false;
         this.$router.push("game/" + this.gamecode);
-      } 
-      else {
+      } else {
         this.error = true;
       }
     },
