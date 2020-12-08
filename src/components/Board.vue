@@ -408,8 +408,6 @@ export default {
                 this.endposition = null;
                 return;
                 }
-                
-
                 if((this.piecesArray[startspace[0]-1][startspace[1]]===null)){
                     //honestly I thought it just looked cleaner
                     if((endspace[0]==startspace[0]-1)&&(endspace[1]==startspace[1])){
@@ -418,27 +416,25 @@ export default {
                     }
                     
                 }
-                
-               
+          
                  if( (7>=(startspace[1]+1)) &&(this.piecesArray[startspace[0]-1][startspace[1]+1]!==null)&& (this.piecesArray[startspace[0]-1][startspace[1]+1].substring(0,5)==="White")){
                         if((endspace[0]==startspace[0]-1) && (endspace[1]==startspace[1]+1) ){
                          this.move(startspace, endspace);
                         return;
                 }}
-               
+
                 if( (0<=(startspace[1]-1)) && (this.piecesArray[startspace[0]-1][startspace[1]-1]!=null)&&(this.piecesArray[startspace[0]-1][startspace[1]-1].substring(0,5)=="White")){
                     if( (endspace[0]==(startspace[0]-1)) && (endspace[1]==(startspace[1]-1)) ){
                          this.move(startspace, endspace);
                         return;
                     }
-
                 }
                 console.log("illegal move")
                 this.startposition = null;
                 this.endposition = null;
                 return;
-
             }
+
             else if (color=="White"){
                 if(!this.turn){
                     console.log("illegal move")
@@ -481,14 +477,19 @@ export default {
         },
 
          kingLogic: function(startspace,endspace,color){
+             if((color=="Black")&&(this.turn)||((color=="White")&&(!this.turn))){
+                 this.startposition = null;
+                this.endposition = null;
+                return;
+             }
           
             var i,j;
             for (i=-1;i<=1;i++){
                 for (j=-1;j<=1;j++){
                     //if in bounds
-                    if((7<=startspace[1]+j)&&(0>=startspace[1]+j)&&(7<=startspace[0]+i)&&(0>=startspace[0]+i)){
+                    if((7>=startspace[1]+j)&&(0<=startspace[1]+j)&&(7>=startspace[0]+i)&&(0<=startspace[0]+i)){
                         //if space is not occupied by teammate
-                        if(this.piecesArray[startspace[0]+i][startspace[1]+j].substring(0,5)!=color){
+                        if(this.piecesArray[startspace[0]+i][startspace[1]+j]==null||this.piecesArray[startspace[0]+i][startspace[1]+j].substring(0,5)!=color){
                             //not skip turn check
                             if(!(i==0&&j==0)){
                                 //if it's the space selected
@@ -505,7 +506,9 @@ export default {
                 }
             }
             console.log("illegal move")
-            return false;
+            this.startposition = null;
+            this.endposition = null;
+                return;
             
         }
 
