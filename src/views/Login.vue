@@ -73,7 +73,7 @@ export default {
         this.$socket.client.emit('roomListRequest');
     },
     joinRoom: function() {
-
+        this.$router.push('game/' + this.gamecode);
     }
   }
 };
