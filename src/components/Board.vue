@@ -175,8 +175,10 @@ export default {
             var startspace = [Number(startposition[0]), Number(startposition[1])]
             var endspace = [Number(endposition[0]), Number(endposition[1])]
             var pieceIdentity= this.piecesArray[startspace[0]][startspace[1]];
+            console.log(pieceIdentity)
+            console.log(this.turn)
             
-            if (((pieceIdentity.substring(0,5)=="White")&&(!this.turn))||(pieceIdentity.substring(0,6)=="Black"&&this.turn)){
+            if (((pieceIdentity.substring(0,5)=="White")&&(!this.turn))||(pieceIdentity.substring(0,5)=="Black"&&this.turn)){
                     console.log("illegal move")
                     this.startposition = null;
                     this.endposition = null;
@@ -197,7 +199,7 @@ export default {
                     console.log("Going to Knight Logic")
                     return this.knightLogic(startspace,endspace,"Black");
 
-                case "WhiteKinght":
+                case "WhiteKnight":
                     console.log("Going to Knight Logic")
                     return this.knightLogic(startspace,endspace,"White");
 
@@ -257,25 +259,33 @@ export default {
         },
 
         knightLogic: function(startspace,endspace,color){
+            if((color=="Black")&&(this.turn)||((color=="White")&&(!this.turn))){
+                 this.startposition = null;
+                this.endposition = null;
+                return;
+             }
             var xMove = endspace[0] - startspace[0];
             var yMove = endspace[1] - startspace[1];
-
-            if (Math.abs(xMove == 2) && Math.abs(yMove == 1) || Math.abs(xMove == 1) && Math.abs(yMove == 2)){
+            // if(xMove<0){xMove=xMove*-1}
+            // if(yMove<0){yMove=yMove*-1}
+            if ( ( ((Math.abs(xMove) ==2 )) && (Math.abs(yMove)==1) ) || ( (Math.abs(xMove)==1) && (Math.abs(yMove)==2) )){
                 // ratio is good, just check that no one is in the way
                 var endSpotPiece = this.piecesArray[endspace[0]][endspace[1]];
-                if(endSpotPiece !== null){       
+                if(endSpotPiece != null){       
                     if(endSpotPiece.substring(0,5) === color){
                         console.log("illegal move")
-                    this.startposition = null;
-                    this.endposition = null;
-                    return;
+                        this.startposition = null;
+                        this.endposition = null;
+                        return;
                     }
                     else{
+                        console.log("capture")
                         this.move(startspace, endspace);
                         return;
                     }
                 }
-                this.move(startspace, endspace);                
+                this.move(startspace, endspace);       
+                return;         
             }
            console.log("illegal move")
                 this.startposition = null;
