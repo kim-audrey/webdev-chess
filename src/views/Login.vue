@@ -95,29 +95,12 @@ export default {
 }
 
 .button {
-  appearance: none;
-  outline: none;
-  border: none;
-  background: none;
   cursor: pointer;
-
-  display: inline-block;
-  padding: 15px 25px;
-  background-image: linear-gradient(to right, #34495e, #41b883);
-  border-radius: 8px;
-
-  color: #fff;
-  font-size: 18px;
-  font-weight: 700;
-
-  box-shadow: 3px 3px rgba(0, 0, 0, 0.4);
-  transition: 0.4s ease-out;
 }
 
 #gamecode {
   position: relative;
   justify-content: center;
   align-items: center;
-  display: flex;
 }
 </style>
