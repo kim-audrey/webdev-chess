@@ -39,8 +39,8 @@
 // host it!
 
 //3rd sprint stuff (don't worry about this)
-// Randomized color (might be easy)
 // Switch board direction
+// Highlight the currently selected piece
 
 
 import Tile from '@/components/Tile'

@@ -30,14 +30,23 @@ export default {
         console.log('receeve')
      },
     roomListResponse(roomList){
+        var rooms = []
+        roomList.forEach(element => rooms.push(element[0]))
+        console.info(roomList)
+        console.info(rooms)
         if (this.rb){
             var randomRBCode;
             do {    
                 randomRBCode = "";
-                for (var i = 0; i < 4; i++){
+                var firstNum
+                do {
+                    firstNum = String(Math.floor(Math.random() * 10))
+                } while (firstNum === "1")
+                randomRBCode += firstNum
+                for (var i = 0; i < 3; i++){
                     randomRBCode += String(Math.floor(Math.random() * 10))
                 }
-            } while (roomList.has(String(randomRBCode)))
+            } while (rooms.includes(String(randomRBCode)))
             this.$router.push('game/' + randomRBCode);
         }
         else {
@@ -47,7 +56,7 @@ export default {
                 for (var j = 0; j < 3; j++){
                     randomCode += String(Math.floor(Math.random() * 10))
                 }
-            } while (roomList.has(String(randomCode)))
+            } while (rooms.includes(String(randomCode)))
             this.$router.push('game/' + randomCode);
         }
     }
