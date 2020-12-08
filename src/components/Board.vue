@@ -186,7 +186,7 @@ export default {
       this.startposition = null;
       this, (endposition = null);
       this.turn = !this.turn;
-     
+      console.log("hahahahahahaha")
 
       this.$socket.client.emit("moveEvent", this.piecesArray);
 
@@ -203,7 +203,7 @@ export default {
       
     console.log(this.color)
     console.log(this.turn)
-      if ((!this.turn)||(pieceIdentity.substring(0,5)!=this.color)||(this.piecesArray[endspace[0]][endspace[1]].substring(0,5)===this.color)) {
+      if ((!this.turn)||(pieceIdentity.substring(0,5)!=this.color)) {
         console.log("illegal move");
         this.startposition = null;
         this.endposition = null;
