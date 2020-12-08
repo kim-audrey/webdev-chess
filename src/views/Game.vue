@@ -1,27 +1,27 @@
 <template>
   <div class="game">
-    <Board :key="componentKey"/>
+    <Board :key="componentKey" />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import Board from "@/components/Board.vue"
+import Board from "@/components/Board.vue";
 
 export default {
   name: "Game",
   components: {
-    Board
+    Board,
   },
-    data() {
-      return {
-        componentKey: 0,
-      };
+  data() {
+    return {
+      componentKey: 0,
+    };
   },
   watch: {
     $route() {
       this.componentKey += 1;
-    }
-  }
+    },
+  },
 };
 </script>
