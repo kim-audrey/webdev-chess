@@ -77,16 +77,14 @@ export default {
       color: null,
       turn: null,
       startposition: null,
-      rb: null,
+      rb: String(this.$route.params.gameID).charAt(0) === "1",
     };
   },
   mounted: function () {
-    if (String(this.$route.params.gameID).charAt(0) === "1") {
+    if (this.rb) {
       this.setupChess();
-      this.rb = false;
     } else {
       this.setupRBChess();
-      this.rb = true;
     }
 
     //Joins room upon board being created
