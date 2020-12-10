@@ -4,9 +4,12 @@
     <!-- idea taken from https://stackoverflow.com/questions/26432492/chessboard-html5-only/26432909 -->
     <p v-if="color === null">Please wait...</p>
     <p v-else-if="color === 'Gray'">You are a spectator.</p>
-    <p v-else>You are {{color}}.</p>
+    <p v-else>You are {{ color }}.</p>
     <p v-if="turn">It is your turn.</p>
     <p v-else>It is your opponent's turn.</p>
+    <p v-if="rb && color === 'Black'">
+      (You will recieve the board when your opponent makes their first move.)
+    </p>
     <table class="chess-board">
       <tbody>
         <tr>
@@ -74,13 +77,16 @@ export default {
       color: null,
       turn: null,
       startposition: null,
+      rb: null,
     };
   },
   mounted: function () {
     if (String(this.$route.params.gameID).charAt(0) === "1") {
       this.setupChess();
+      this.rb = false;
     } else {
       this.setupRBChess();
+      this.rb = true;
     }
 
     //Joins room upon board being created
@@ -204,19 +210,15 @@ export default {
       var startspace = [Number(startposition[0]), Number(startposition[1])];
       var endspace = [Number(endposition[0]), Number(endposition[1])];
       var pieceIdentity = this.piecesArray[startspace[0]][startspace[1]];
-      
-    console.log(this.color)
-    console.log(this.turn)
-      if ((!this.turn)||(pieceIdentity.substring(0,5)!=this.color)) {
+
+      console.log(this.color);
+      console.log(this.turn);
+      if (!this.turn || pieceIdentity.substring(0, 5) != this.color) {
         console.log("illegal move");
         this.startposition = null;
         this.endposition = null;
         return;
-      
-      } 
-      
-
-      else {
+      } else {
         switch (pieceIdentity) {
           case "BlackRook":
             //console.log("Going to Rook Logic");
@@ -288,8 +290,6 @@ export default {
     },
 
     knightLogic: function (startspace, endspace, color) {
-      
-
       if (startspace === endspace) {
         console.log("illegal move -- no movement");
         this.startposition = null;
@@ -454,7 +454,6 @@ export default {
         return;
       }
       if (color == "Black") {
-        
         if (this.piecesArray[startspace[0] - 1][startspace[1]] === null) {
           //honestly I thought it just looked cleaner
           if (
@@ -469,7 +468,10 @@ export default {
         if (
           7 >= startspace[1] + 1 &&
           this.piecesArray[startspace[0] - 1][startspace[1] + 1] !== null &&
-          this.piecesArray[startspace[0] - 1][startspace[1] + 1].substring(0,5) === "White"
+          this.piecesArray[startspace[0] - 1][startspace[1] + 1].substring(
+            0,
+            5
+          ) === "White"
         ) {
           if (
             endspace[0] == startspace[0] - 1 &&
@@ -483,7 +485,10 @@ export default {
         if (
           0 <= startspace[1] - 1 &&
           this.piecesArray[startspace[0] - 1][startspace[1] - 1] != null &&
-          this.piecesArray[startspace[0] - 1][startspace[1] - 1].substring(0, 5) == "White"
+          this.piecesArray[startspace[0] - 1][startspace[1] - 1].substring(
+            0,
+            5
+          ) == "White"
         ) {
           if (
             endspace[0] == startspace[0] - 1 &&
@@ -498,8 +503,6 @@ export default {
         this.endposition = null;
         return;
       } else if (color == "White") {
-        
-
         if (this.piecesArray[startspace[0] + 1][startspace[1]] === null) {
           if (
             endspace[0] == startspace[0] + 1 &&
@@ -519,7 +522,10 @@ export default {
         if (
           7 >= startspace[1] + 1 &&
           this.piecesArray[startspace[0] + 1][startspace[1] + 1] != null &&
-          this.piecesArray[startspace[0] + 1][startspace[1] + 1].substring( 0, 5) == "Black"
+          this.piecesArray[startspace[0] + 1][startspace[1] + 1].substring(
+            0,
+            5
+          ) == "Black"
         ) {
           if (
             endspace[0] == startspace[0] + 1 &&
@@ -532,7 +538,10 @@ export default {
         if (
           0 <= startspace[1] - 1 &&
           this.piecesArray[startspace[0] + 1][startspace[1] - 1] != null &&
-          this.piecesArray[startspace[0] + 1][startspace[1] - 1].substring( 0,5) == "Black"
+          this.piecesArray[startspace[0] + 1][startspace[1] - 1].substring(
+            0,
+            5
+          ) == "Black"
         ) {
           if (
             endspace[0] == startspace[0] + 1 &&
@@ -555,7 +564,6 @@ export default {
     },
 
     kingLogic: function (startspace, endspace, color) {
-
       var i, j;
       for (i = -1; i <= 1; i++) {
         for (j = -1; j <= 1; j++) {
@@ -603,10 +611,13 @@ export default {
     setColor(c) {
       this.color = c;
       this.turn = c === "White" ? true : false;
+      if (this.color === "Black"){
+        this.piecesArray = Array.from(Array(8), () => new Array(8).fill(null));
+      }
     },
     moveResponse(recievedArray) {
       this.piecesArray = recievedArray;
-      this.turn=!this.turn;
+      this.turn = !this.turn;
       this.$forceUpdate();
     },
     getColor() {
