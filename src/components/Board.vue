@@ -284,11 +284,7 @@ export default {
     },
 
     knightLogic: function (startspace, endspace, color) {
-      if ((color == "Black" && this.turn) || (color == "White" && !this.turn)) {
-        this.startposition = null;
-        this.endposition = null;
-        return;
-      }
+      
 
       if (startspace === endspace) {
         console.log("illegal move -- no movement");
