@@ -161,31 +161,26 @@ export default {
       var space = [Number(position[0]), Number(position[1])];
 
       if (this.piecesArray[space[0]][space[1]] === null) {
+        //Cannot select a tile to start!
         if (this.startposition !== null) {
-          //console.log("Calling Logic to move to a tile")
+          //Calling Logic to move to a tile
           this.logic(this.startposition, position);
-        } else {
-          //console.log("Cannot select a tile to start!")
         }
-        //console.log("Tile at " + position)
       }
     },
     //When a piece is selected, check if a piece is already selected. If not, store its position.
     //Otherwise, overwrite the piece at this position with the first selected piece.
     pieceSelection: function (position) {
       if (this.startposition === null) {
-        //console.log("Start-Selected " + position)
         this.startposition = position;
       } else {
-        //console.log("Moving piece on to piece")
         this.logic(this.startposition, position);
       }
-      //console.log("Piece at " + position)
     },
     //Move a piece to a different square and remove it from this space,
     //then pass the turn to the other player.
     move: function (startposition, endposition) {
-      //console.log("In the move function, meaning move was legal")
+      // In the move function, meaning move was legal
       var startspace = [Number(startposition[0]), Number(startposition[1])];
       var endspace = [Number(endposition[0]), Number(endposition[1])];
 
@@ -221,50 +216,50 @@ export default {
       } else {
         switch (pieceIdentity) {
           case "BlackRook":
-            //console.log("Going to Rook Logic");
+            //Going to Rook Logic
             return this.rookLogic(startspace, endspace, "Black");
 
           case "WhiteRook":
-            //console.log("Going to Rook Logic");
+            //Going to Rook Logic
             return this.rookLogic(startspace, endspace, "White");
 
           case "BlackKnight":
-            //console.log("Going to Knight Logic");
+            //Going to Knight Logic
             return this.knightLogic(startspace, endspace, "Black");
 
           case "WhiteKnight":
-            //console.log("Going to Knight Logic");
+            //Going to Knight Logic
             return this.knightLogic(startspace, endspace, "White");
 
           case "BlackBishop":
-            //console.log("Going to Bishop Logic");
+            //Going to Bishop Logic
             return this.bishopLogic(startspace, endspace, "Black");
 
           case "WhiteBishop":
-            //console.log("Going to Bishop Logic");
+            //Going to Bishop Logic
             return this.bishopLogic(startspace, endspace, "White");
 
           case "BlackKing":
-            //console.log("Going to King Logic");
+            //Going to King Logic
             return this.kingLogic(startspace, endspace, "Black");
 
           case "WhiteKing":
-            //console.log("Going to King Logic");
+            //Going to King Logic
             return this.kingLogic(startspace, endspace, "White");
 
           case "BlackQueen":
-            //console.log("Going to Queen Logic");
+            //Going to Queen Logic
             return this.queenLogic(startspace, endspace, "Black");
 
           case "WhiteQueen":
-            //console.log("Going to Queen Logic");
+            //Going to Queen Logic
             return this.queenLogic(startspace, endspace, "White");
 
           case "BlackPawn":
-            //console.log("Going to Pawn Logic");
+            //Going to Pawn Logic
             return this.pawnLogic(startspace, endspace, "Black");
           case "WhitePawn":
-            //console.log("Going to Pawn Logic");
+            //Going to Pawn Logic
             return this.pawnLogic(startspace, endspace, "White");
 
           default:
