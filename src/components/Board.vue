@@ -77,14 +77,16 @@ export default {
       color: null,
       turn: null,
       startposition: null,
-      rb: String(this.$route.params.gameID).charAt(0) === "1",
+      rb: null,
     };
   },
   mounted: function () {
-    if (this.rb) {
+    if (String(this.$route.params.gameID).charAt(0) === "1") {
       this.setupChess();
+      this.rb = false;
     } else {
       this.setupRBChess();
+      this.rb = true;
     }
 
     //Joins room upon board being created
@@ -611,6 +613,7 @@ export default {
     moveResponse(recievedArray) {
       this.piecesArray = recievedArray;
       this.turn = !this.turn;
+      this.rb = false;
       this.$forceUpdate();
     },
     getColor() {
