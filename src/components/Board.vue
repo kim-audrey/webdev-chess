@@ -3,6 +3,10 @@
     <!-- Creates an html table to simulate a chessboard -->
     <!-- idea taken from https://stackoverflow.com/questions/26432492/chessboard-html5-only/26432909 -->
     <p v-if="color === null">Please wait...</p>
+    <p v-else-if="color === 'Gray'">You are a spectator.</p>
+    <p v-else>You are {{color}}.</p>
+    <p v-if="turn">It is your turn.</p>
+    <p v-else>It is your opponent's turn.</p>
     <table class="chess-board">
       <tbody>
         <tr>
