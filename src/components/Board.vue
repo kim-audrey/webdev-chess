@@ -555,11 +555,6 @@ export default {
     },
 
     kingLogic: function (startspace, endspace, color) {
-      if ((color == "Black" && this.turn) || (color == "White" && !this.turn)) {
-        this.startposition = null;
-        this.endposition = null;
-        return;
-      }
 
       var i, j;
       for (i = -1; i <= 1; i++) {
