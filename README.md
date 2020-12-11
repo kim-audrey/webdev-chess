@@ -11,6 +11,17 @@ If given a game code, enter the code into the text box after "Enter Game Code He
 ### Playing The Game
 To move pieces, click your piece and then the square which you'd like your piece to move to.
 
+## How the Code Works
+### Selecting Pieces
+After selecting a piece, the next tile selected sends a pair of (startposition, endposition) to determine if the move is valid
+
+
+### Determining if a move is valid
+A lottta if statements if a turn can be transmitted at all on that side, if the piece selected is of the side of the client, and if it is a legal move of the piece selected.
+
+### Color assignment
+Colors are randomly assigned. 
+
 
 
 ## Project setup
