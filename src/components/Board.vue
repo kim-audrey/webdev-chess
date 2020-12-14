@@ -10,7 +10,7 @@
     <p v-if="rb && color === 'Black'">
       (You will recieve the board when your opponent makes their first move.)
     </p>
-    <p v-if="winner">{{color}} wins!</p>
+    <p v-if="winner">{{winner}} wins!</p>
     <table class="chess-board">
       <tbody>
         <tr>
@@ -198,20 +198,10 @@ export default {
       this.startposition = null;
       this, (endposition = null);
       this.turn = !this.turn;
-
+      
       this.$socket.client.emit("moveEvent", this.piecesArray);
 
-      var whiteWins = true;
-      var blackWins = true;
-
-      for (var i = 0; i < 8; i++){
-        for (var j = 0; j < 8; j++){
-          if (this.piecesArray[i][j] === "BlackKing") whiteWins = false;
-          if (this.piecesArray[i][j] === "WhiteKing") blackWins = false;
-        }
-      }
-      if (whiteWins) this.winner = "White";
-      if (blackWins) this.winner = "Black";
+      this.checkWin();
 
       this.$forceUpdate();
     },
@@ -615,6 +605,19 @@ export default {
       this.endposition = null;
       return;
     },
+    checkWin: function() {
+      var whiteWins = true;
+      var blackWins = true;
+
+      for (var i = 0; i < 8; i++){
+        for (var j = 0; j < 8; j++){
+          if (this.piecesArray[i][j] === "BlackKing") whiteWins = false;
+          if (this.piecesArray[i][j] === "WhiteKing") blackWins = false;
+        }
+      }
+      if (whiteWins) this.winner = "White";
+      if (blackWins) this.winner = "Black";
+    }
   },
 
   sockets: {
@@ -632,6 +635,7 @@ export default {
       this.piecesArray = recievedArray;
       this.turn = !this.turn;
       this.rb = false;
+      this.checkWin();
       this.$forceUpdate();
     },
     getColor() {
