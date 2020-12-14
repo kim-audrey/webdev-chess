@@ -32,7 +32,7 @@
           <td
             v-for="m in 8"
             :key="m"
-            :class="{ light: (n + m) % 2 == 0, dark: (n + m) % 2 == 1 }"
+            :class="{ light: (n + m) % 2 == 0, dark: (n + m) % 2 == 1, highlight: startposition === String(8 - n) + String(m - 1)}"
           >
             <Tile
               v-if="piecesArray[8 - n][m - 1] === null"
@@ -43,6 +43,7 @@
               v-if="piecesArray[8 - n][m - 1] != null"
               :pieceType="piecesArray[8 - n][m - 1]"
               :space="String(8 - n) + String(m - 1)"
+              :highlight="startposition === String(8 - n) + String(m - 1)"
               v-on:pieceSelected="pieceSelection"
             />
           </td>
@@ -178,6 +179,7 @@ export default {
       if (this.winner === null){
         if (this.startposition === null) {
           this.startposition = position;
+          //this.$forceUpdate();
         } else {
           this.logic(this.startposition, position);
         }
@@ -709,5 +711,8 @@ export default {
 }
 .chess-board .dark {
   background: #622;
+}
+.chess-board .highlight {
+  background: #ffa
 }
 </style>
