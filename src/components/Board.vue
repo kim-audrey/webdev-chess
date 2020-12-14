@@ -448,7 +448,27 @@ export default {
         this.endposition = null;
         return;
       }
+      
+
+
+
       if (color == "Black") {
+        if(startspace[0]===6){
+           if (this.piecesArray[startspace[0] - 1][startspace[1]] === null && this.piecesArray[startspace[0] - 2][startspace[1]] === null) 
+          {
+             if (
+            endspace[0] == startspace[0] - 2 &&
+            endspace[1] == startspace[1]
+          ) {
+            this.move(startspace, endspace);
+            return;
+          }
+          }
+        }
+
+
+
+
         if (this.piecesArray[startspace[0] - 1][startspace[1]] === null) {
           //honestly I thought it just looked cleaner
           if (
@@ -497,7 +517,22 @@ export default {
         this.startposition = null;
         this.endposition = null;
         return;
+
+
       } else if (color == "White") {
+        if(startspace[0]===1){
+           if (this.piecesArray[startspace[0] + 1][startspace[1]] === null && this.piecesArray[startspace[0] + 2][startspace[1]] === null) 
+          {
+             if (
+            endspace[0] == startspace[0] + 2 &&
+            endspace[1] == startspace[1]
+          ) {
+            this.move(startspace, endspace);
+            return;
+          }
+          }
+        }
+
         if (this.piecesArray[startspace[0] + 1][startspace[1]] === null) {
           if (
             endspace[0] == startspace[0] + 1 &&
