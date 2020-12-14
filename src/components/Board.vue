@@ -5,11 +5,12 @@
     <p v-if="color === null">Please wait...</p>
     <p v-else-if="color === 'Gray'">You are a spectator.</p>
     <p v-else>You are {{ color }}.</p>
-    <p v-if="turn">It is your turn.</p>
-    <p v-else>It is your opponent's turn.</p>
+    <p v-if="turn && winner === null">It is your turn.</p>
+    <p v-else-if="winner === null">It is your opponent's turn.</p>
     <p v-if="rb && color === 'Black'">
       (You will recieve the board when your opponent makes their first move.)
     </p>
+    <p v-if="winner">{{winner}} wins!</p>
     <table class="chess-board">
       <tbody>
         <tr>
@@ -78,6 +79,7 @@ export default {
       turn: null,
       startposition: null,
       rb: null,
+      winner: null,
     };
   },
   mounted: function () {
@@ -158,23 +160,27 @@ export default {
     //When a tile is clicked while a piece is selected, delete the piece at the old position,
     //move it to the new position, store the new board, and send it to the opponent.
     tileSelection: function (position) {
-      var space = [Number(position[0]), Number(position[1])];
+      if (this.winner === null){
+        var space = [Number(position[0]), Number(position[1])];
 
-      if (this.piecesArray[space[0]][space[1]] === null) {
-        //Cannot select a tile to start!
-        if (this.startposition !== null) {
-          //Calling Logic to move to a tile
-          this.logic(this.startposition, position);
+        if (this.piecesArray[space[0]][space[1]] === null) {
+          //Cannot select a tile to start!
+          if (this.startposition !== null) {
+            //Calling Logic to move to a tile
+            this.logic(this.startposition, position);
+          }
         }
       }
     },
     //When a piece is selected, check if a piece is already selected. If not, store its position.
     //Otherwise, overwrite the piece at this position with the first selected piece.
     pieceSelection: function (position) {
-      if (this.startposition === null) {
-        this.startposition = position;
-      } else {
-        this.logic(this.startposition, position);
+      if (this.winner === null){
+        if (this.startposition === null) {
+          this.startposition = position;
+        } else {
+          this.logic(this.startposition, position);
+        }
       }
     },
     //Move a piece to a different square and remove it from this space,
@@ -192,8 +198,10 @@ export default {
       this.startposition = null;
       this, (endposition = null);
       this.turn = !this.turn;
-
+      
       this.$socket.client.emit("moveEvent", this.piecesArray);
+
+      this.checkWin();
 
       this.$forceUpdate();
     },
@@ -513,7 +521,7 @@ export default {
             return;
           }
         }
-        console.log("illegal move");
+        // illegal move
         this.startposition = null;
         this.endposition = null;
         return;
@@ -632,6 +640,19 @@ export default {
       this.endposition = null;
       return;
     },
+    checkWin: function() {
+      var whiteWins = true;
+      var blackWins = true;
+
+      for (var i = 0; i < 8; i++){
+        for (var j = 0; j < 8; j++){
+          if (this.piecesArray[i][j] === "BlackKing") whiteWins = false;
+          if (this.piecesArray[i][j] === "WhiteKing") blackWins = false;
+        }
+      }
+      if (whiteWins) this.winner = "White";
+      if (blackWins) this.winner = "Black";
+    }
   },
 
   sockets: {
@@ -641,7 +662,7 @@ export default {
     setColor(c) {
       this.color = c;
       this.turn = c === "White" ? true : false;
-      if (this.color === "Black"){
+      if (this.rb && this.color === "Black"){
         this.piecesArray = Array.from(Array(8), () => new Array(8).fill(null));
       }
     },
@@ -649,6 +670,7 @@ export default {
       this.piecesArray = recievedArray;
       this.turn = !this.turn;
       this.rb = false;
+      this.checkWin();
       this.$forceUpdate();
     },
     getColor() {
