@@ -176,13 +176,17 @@ export default {
     //When a piece is selected, check if a piece is already selected. If not, store its position.
     //Otherwise, overwrite the piece at this position with the first selected piece.
     pieceSelection: function (position) {
+  
       if (this.winner === null){
         if (this.startposition === null) {
+          if(this.turn && this.piecesArray[Number(position[0])][Number(position[1])].substring(0, 5) === this.color){
           this.startposition = position;
-          //this.$forceUpdate();
-        } else {
-          this.logic(this.startposition, position);
-        }
+          }
+        } 
+        else {
+        this.logic(this.startposition, position);
+      }
+      
       }
     },
     //Move a piece to a different square and remove it from this space,
@@ -218,12 +222,13 @@ export default {
 
       console.log(this.color);
       console.log(this.turn);
-      if (!this.turn || pieceIdentity.substring(0, 5) != this.color) {
-        console.log("illegal move");
-        this.startposition = null;
-        this.endposition = null;
-        return;
-      } else {
+      // if (!this.turn||pieceIdentity.substring(0, 5) != this.color) {
+      //   console.log("illegal move");
+      //   this.startposition = null;
+      //   this.endposition = null;
+      //   return;
+      // } 
+      //else {
         switch (pieceIdentity) {
           case "BlackRook":
             //Going to Rook Logic
@@ -278,7 +283,7 @@ export default {
             this.endposition = null;
             return;
         }
-      }
+      //}
     },
 
     queenLogic: function (startspace, endspace, color) {
