@@ -50,6 +50,18 @@
         </tr>
       </tbody>
     </table>
+  <!-- Creates button for choice when promotion should occur -->
+  <transition v-if="promotion" name="fade" appear>
+    <div class="modal-overlay" v-if="showModal" @click="showModal=false"></div>
+  </transition>
+  <transition name="slide" appear>
+    <div class="modal" v-if="showModal">
+        <h1>Pick a promotion.</h1>
+
+    </div>
+  </transition>
+
+   
   </div>
 </template>
 
