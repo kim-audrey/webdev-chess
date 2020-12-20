@@ -7,10 +7,21 @@
     <p v-else>You are {{ color }}.</p>
     <p v-if="turn && winner === null">It is your turn.</p>
     <p v-else-if="winner === null">It is your opponent's turn.</p>
+    <p v-if="undo && color !== 'Gray' && winner == null">
+      Your opponent wants to undo this move.
+    </p>
+    <button
+      v-if="color !== 'Gray' && undoArray != null && winner == null"
+      class="button"
+      @click="voteToUndoMove"
+    >
+      Undo Move
+    </button>
     <p v-if="rb && color === 'Black'">
       (You will recieve the board when your opponent makes their first move.)
     </p>
-    <p v-if="winner">{{winner}} wins!</p>
+    <p v-if="winner">{{ winner }} wins!</p>
+
     <table class="chess-board">
       <tbody>
         <tr>
@@ -32,7 +43,11 @@
           <td
             v-for="m in 8"
             :key="m"
-            :class="{ light: (n + m) % 2 == 0, dark: (n + m) % 2 == 1, highlight: startposition === String(8 - n) + String(m - 1)}"
+            :class="{
+              light: (n + m) % 2 == 0,
+              dark: (n + m) % 2 == 1,
+              highlight: startposition === String(8 - n) + String(m - 1),
+            }"
           >
             <Tile
               v-if="piecesArray[8 - n][m - 1] === null"
@@ -50,18 +65,19 @@
         </tr>
       </tbody>
     </table>
-  <!-- Creates button for choice when promotion should occur -->
-  <transition v-if="promotion" name="fade" appear>
-    <div class="modal-overlay" v-if="showModal" @click="showModal=false"></div>
-  </transition>
-  <transition name="slide" appear>
-    <div class="modal" v-if="showModal">
+    <!-- Creates button for choice when promotion should occur -->
+    <transition v-if="promotion" name="fade" appear>
+      <div
+        class="modal-overlay"
+        v-if="showModal"
+        @click="showModal = false"
+      ></div>
+    </transition>
+    <transition name="slide" appear>
+      <div class="modal" v-if="showModal">
         <h1>Pick a promotion.</h1>
-
-    </div>
-  </transition>
-
-   
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -86,13 +102,23 @@ export default {
   },
   data: function () {
     return {
-      //taken from https://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
+      //piecesArray: The current state of the chess board and where the pieces are
+      //undoArray: The most recent state of the chess board, what players can use undo to go to
+      //color: The player color (Gray for spectators)
+      //turn: Whether it is your turn
+      //startposition: The chosen square to begin a move from
+      //rb: Whether it is the opening of a really bad game, so Black won't generate a board
+      //winner: Who the winner is
+      //undo: Whether this player has been given the ability to undo a move after their opponent first requested it
+      //Array creation taken from https://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
       piecesArray: Array.from(Array(8), () => new Array(8).fill(null)),
+      undoArray: null,
       color: null,
       turn: null,
       startposition: null,
       rb: null,
       winner: null,
+      undo: false,
     };
   },
   mounted: function () {
@@ -173,7 +199,7 @@ export default {
     //When a tile is clicked while a piece is selected, delete the piece at the old position,
     //move it to the new position, store the new board, and send it to the opponent.
     tileSelection: function (position) {
-      if (this.winner === null){
+      if (this.winner === null) {
         var space = [Number(position[0]), Number(position[1])];
 
         if (this.piecesArray[space[0]][space[1]] === null) {
@@ -188,22 +214,26 @@ export default {
     //When a piece is selected, check if a piece is already selected. If not, store its position.
     //Otherwise, overwrite the piece at this position with the first selected piece.
     pieceSelection: function (position) {
-  
-      if (this.winner === null){
+      if (this.winner === null) {
         if (this.startposition === null) {
-          if(this.turn && this.piecesArray[Number(position[0])][Number(position[1])].substring(0, 5) === this.color){
-          this.startposition = position;
+          if (
+            this.turn &&
+            this.piecesArray[Number(position[0])][
+              Number(position[1])
+            ].substring(0, 5) === this.color
+          ) {
+            this.startposition = position;
           }
-        } 
-        else {
-        this.logic(this.startposition, position);
-      }
-      
+        } else {
+          this.logic(this.startposition, position);
+        }
       }
     },
     //Move a piece to a different square and remove it from this space,
     //then pass the turn to the other player.
     move: function (startposition, endposition) {
+      this.undoArray = JSON.parse(JSON.stringify(this.piecesArray));
+      this.undo = false;
       // In the move function, meaning move was legal
       var startspace = [Number(startposition[0]), Number(startposition[1])];
       var endspace = [Number(endposition[0]), Number(endposition[1])];
@@ -214,9 +244,11 @@ export default {
       this.piecesArray[startspace[0]][startspace[1]] = null;
 
       this.startposition = null;
-      this, (endposition = null);
+      this.endposition = null;
       this.turn = !this.turn;
-      
+
+      this.rb = false;
+
       this.$socket.client.emit("moveEvent", this.piecesArray);
 
       this.checkWin();
@@ -239,62 +271,62 @@ export default {
       //   this.startposition = null;
       //   this.endposition = null;
       //   return;
-      // } 
+      // }
       //else {
-        switch (pieceIdentity) {
-          case "BlackRook":
-            //Going to Rook Logic
-            return this.rookLogic(startspace, endspace, "Black");
+      switch (pieceIdentity) {
+        case "BlackRook":
+          //Going to Rook Logic
+          return this.rookLogic(startspace, endspace, "Black");
 
-          case "WhiteRook":
-            //Going to Rook Logic
-            return this.rookLogic(startspace, endspace, "White");
+        case "WhiteRook":
+          //Going to Rook Logic
+          return this.rookLogic(startspace, endspace, "White");
 
-          case "BlackKnight":
-            //Going to Knight Logic
-            return this.knightLogic(startspace, endspace, "Black");
+        case "BlackKnight":
+          //Going to Knight Logic
+          return this.knightLogic(startspace, endspace, "Black");
 
-          case "WhiteKnight":
-            //Going to Knight Logic
-            return this.knightLogic(startspace, endspace, "White");
+        case "WhiteKnight":
+          //Going to Knight Logic
+          return this.knightLogic(startspace, endspace, "White");
 
-          case "BlackBishop":
-            //Going to Bishop Logic
-            return this.bishopLogic(startspace, endspace, "Black");
+        case "BlackBishop":
+          //Going to Bishop Logic
+          return this.bishopLogic(startspace, endspace, "Black");
 
-          case "WhiteBishop":
-            //Going to Bishop Logic
-            return this.bishopLogic(startspace, endspace, "White");
+        case "WhiteBishop":
+          //Going to Bishop Logic
+          return this.bishopLogic(startspace, endspace, "White");
 
-          case "BlackKing":
-            //Going to King Logic
-            return this.kingLogic(startspace, endspace, "Black");
+        case "BlackKing":
+          //Going to King Logic
+          return this.kingLogic(startspace, endspace, "Black");
 
-          case "WhiteKing":
-            //Going to King Logic
-            return this.kingLogic(startspace, endspace, "White");
+        case "WhiteKing":
+          //Going to King Logic
+          return this.kingLogic(startspace, endspace, "White");
 
-          case "BlackQueen":
-            //Going to Queen Logic
-            return this.queenLogic(startspace, endspace, "Black");
+        case "BlackQueen":
+          //Going to Queen Logic
+          return this.queenLogic(startspace, endspace, "Black");
 
-          case "WhiteQueen":
-            //Going to Queen Logic
-            return this.queenLogic(startspace, endspace, "White");
+        case "WhiteQueen":
+          //Going to Queen Logic
+          return this.queenLogic(startspace, endspace, "White");
 
-          case "BlackPawn":
-            //Going to Pawn Logic
-            return this.pawnLogic(startspace, endspace, "Black");
-          case "WhitePawn":
-            //Going to Pawn Logic
-            return this.pawnLogic(startspace, endspace, "White");
+        case "BlackPawn":
+          //Going to Pawn Logic
+          return this.pawnLogic(startspace, endspace, "Black");
+        case "WhitePawn":
+          //Going to Pawn Logic
+          return this.pawnLogic(startspace, endspace, "White");
 
-          default:
-            console.log("illegal move");
-            this.startposition = null;
-            this.endposition = null;
-            return;
-        }
+        default:
+          console.log("illegal move");
+          this.startposition = null;
+          this.endposition = null;
+          return;
+      }
       //}
     },
 
@@ -475,26 +507,22 @@ export default {
         this.endposition = null;
         return;
       }
-      
-
-
 
       if (color == "Black") {
-        if(startspace[0]===6){
-           if (this.piecesArray[startspace[0] - 1][startspace[1]] === null && this.piecesArray[startspace[0] - 2][startspace[1]] === null) 
-          {
-             if (
-            endspace[0] == startspace[0] - 2 &&
-            endspace[1] == startspace[1]
+        if (startspace[0] === 6) {
+          if (
+            this.piecesArray[startspace[0] - 1][startspace[1]] === null &&
+            this.piecesArray[startspace[0] - 2][startspace[1]] === null
           ) {
-            this.move(startspace, endspace);
-            return;
-          }
+            if (
+              endspace[0] == startspace[0] - 2 &&
+              endspace[1] == startspace[1]
+            ) {
+              this.move(startspace, endspace);
+              return;
+            }
           }
         }
-
-
-
 
         if (this.piecesArray[startspace[0] - 1][startspace[1]] === null) {
           //honestly I thought it just looked cleaner
@@ -544,19 +572,19 @@ export default {
         this.startposition = null;
         this.endposition = null;
         return;
-
-
       } else if (color == "White") {
-        if(startspace[0]===1){
-           if (this.piecesArray[startspace[0] + 1][startspace[1]] === null && this.piecesArray[startspace[0] + 2][startspace[1]] === null) 
-          {
-             if (
-            endspace[0] == startspace[0] + 2 &&
-            endspace[1] == startspace[1]
+        if (startspace[0] === 1) {
+          if (
+            this.piecesArray[startspace[0] + 1][startspace[1]] === null &&
+            this.piecesArray[startspace[0] + 2][startspace[1]] === null
           ) {
-            this.move(startspace, endspace);
-            return;
-          }
+            if (
+              endspace[0] == startspace[0] + 2 &&
+              endspace[1] == startspace[1]
+            ) {
+              this.move(startspace, endspace);
+              return;
+            }
           }
         }
 
@@ -659,19 +687,39 @@ export default {
       this.endposition = null;
       return;
     },
-    checkWin: function() {
+    checkWin: function () {
       var whiteWins = true;
       var blackWins = true;
 
-      for (var i = 0; i < 8; i++){
-        for (var j = 0; j < 8; j++){
+      for (var i = 0; i < 8; i++) {
+        for (var j = 0; j < 8; j++) {
           if (this.piecesArray[i][j] === "BlackKing") whiteWins = false;
           if (this.piecesArray[i][j] === "WhiteKing") blackWins = false;
         }
       }
       if (whiteWins) this.winner = "White";
       if (blackWins) this.winner = "Black";
-    }
+    },
+    voteToUndoMove() {
+      //if this.undo is false, it means this player is the first one to request undoing,
+      //and the server will set the other player's this.undo to true to allow them
+      //to actually undo the move.
+      //if this.undo is ture, the server will undo the move and send it to everyone.
+      console.log("Button clicked");
+      this.$socket.client.emit("undoEvent", this.undo);
+      console.log("Event sent to server");
+      console.log(this.undoArray === this.piecesArray);
+      if (this.undo) {
+        this.piecesArray = this.undoArray;
+        this.undo = false;
+        this.undoArray = null;
+        this.startposition = null;
+        this.endposition = null;
+        this.turn = !this.turn;
+        this.$forceUpdate();
+        console.log("Board reset for sender");
+      }
+    },
   },
 
   sockets: {
@@ -681,14 +729,20 @@ export default {
     setColor(c) {
       this.color = c;
       this.turn = c === "White" ? true : false;
-      if (this.rb && this.color === "Black"){
+      if (this.rb && this.color === "Black") {
         this.piecesArray = Array.from(Array(8), () => new Array(8).fill(null));
       }
     },
     moveResponse(recievedArray) {
+      this.undoArray = [...this.piecesArray];
+      this.undo = false;
+
       this.piecesArray = recievedArray;
+      this.startposition = null;
+      this.endposition = null;
       this.turn = !this.turn;
       this.rb = false;
+
       this.checkWin();
       this.$forceUpdate();
     },
@@ -699,6 +753,21 @@ export default {
     },
     colorEcho(col) {
       this.$socket.client.emit("giveColor", col);
+    },
+    undoResponse(agreer) {
+      if (agreer) {
+        this.piecesArray = this.undoArray;
+        this.undo = false;
+        this.undoArray = null;
+        this.startposition = null;
+        this.endposition = null;
+        this.turn = !this.turn;
+        this.$forceUpdate();
+        console.log("Board reset for reciever");
+      } else {
+        this.undo = true;
+        console.log("Recieved opponent's undo request");
+      }
     },
   },
 };
@@ -730,6 +799,10 @@ export default {
   background: #622;
 }
 .chess-board .highlight {
-  background: #ffa
+  background: #ffa;
+}
+
+.button {
+  cursor: pointer;
 }
 </style>
