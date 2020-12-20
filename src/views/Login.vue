@@ -30,6 +30,9 @@ export default {
       error: false,
     };
   },
+  mounted: function () {
+    this.$socket.client.emit("clearSocket");
+  },
   //Responses to events sent from the server
   sockets: {
     connect() {
