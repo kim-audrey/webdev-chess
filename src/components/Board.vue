@@ -48,7 +48,14 @@
       <p v-if="winner">{{ winner }} wins!</p>
 
       <!-- Button turns on for rematch! 12/20 -->
-      <button v-if="winner" class="button" @click="setupChess">Rematch</button>
+
+      <button
+        v-if="winner"
+        class="button"
+        @click="rematch"
+      > Rematch</button>
+      
+
 
       <table class="chess-board">
         <tbody>
@@ -226,6 +233,23 @@ export default {
       this.piecesArray[7][4] = "BlackKing";
       this.piecesArray[0][4] = "WhiteKing";
     },
+    rematch: function(){
+      if (String(this.$route.params.gameID).charAt(0) === "1") {
+        this.setupChess();
+      } else {
+        this.setupRBChess();
+      }
+
+      if(this.color=="Black"){
+        this.turn=false;
+      }
+      this.undoArray=null;
+
+      this.$socket.client.emit("resetBoard", this.piecesArray, this.color);
+
+      this.winner = null;
+
+    },
     //When a tile is clicked while a piece is selected, delete the piece at the old position,
     //move it to the new position, store the new board, and send it to the opponent.
     tileSelection: function (position) {
@@ -280,9 +304,7 @@ export default {
       this.turn = !this.turn;
 
       this.$socket.client.emit("moveEvent", this.piecesArray);
-
       this.checkWin();
-
       this.$forceUpdate();
     },
     castleMove: function (color, side) {
@@ -881,6 +903,8 @@ export default {
         JSON.stringify(prev) !== JSON.stringify(recievedArray)
       ) {
         this.undoArray = prev;
+      } else {
+        this.undoArray = null;
       }
 
       if (turn == null) {
@@ -894,10 +918,10 @@ export default {
       } else {
         this.turn = (this.color == "White") == turn;
       }
+      this.winner=null;
       this.checkWin();
       this.$forceUpdate();
-      console.log(turn);
-      console.log(this.color);
+
     },
     moveResponse(recievedArray) {
       this.undoArray = [...this.piecesArray];
