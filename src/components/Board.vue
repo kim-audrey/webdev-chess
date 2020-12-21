@@ -41,7 +41,15 @@
       >
         Undo Move
       </button>
-      <p v-if="winner">{{ winner }} wins!</p>
+      <p v-if="winner">{{ winner }} wins!</p> 
+
+      <!-- Button turns on for rematch! 12/20 -->
+      <button
+        v-if="winner"
+        class="button"
+        @click="setupChess"
+      > Rematch</button>
+      
 
       <table class="chess-board">
         <tbody>
@@ -170,18 +178,21 @@ export default {
             if (j === 3) this.piecesArray[i][j] = "BlackQueen";
             if (j === 4) this.piecesArray[i][j] = "BlackKing";
           }
-          if (i === 6) {
+          else if (i === 6) {
             this.piecesArray[i][j] = "BlackPawn";
           }
-          if (i === 1) {
+          else if (i === 1) {
             this.piecesArray[i][j] = "WhitePawn";
           }
-          if (i === 0) {
+          else if (i === 0) {
             if (j === 0 || j === 7) this.piecesArray[i][j] = "WhiteRook";
             if (j === 1 || j === 6) this.piecesArray[i][j] = "WhiteKnight";
             if (j === 2 || j === 5) this.piecesArray[i][j] = "WhiteBishop";
             if (j === 3) this.piecesArray[i][j] = "WhiteQueen";
             if (j === 4) this.piecesArray[i][j] = "WhiteKing";
+          }
+          else {
+            this.piecesArray[i][j] = null; 
           }
         }
       }
