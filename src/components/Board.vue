@@ -237,9 +237,14 @@ export default {
         this.setupRBChess();
       }
 
+      if(this.color=="Black"){
+        this.turn=false;
+      }
+      this.undoArray=null;
+
       this.$socket.client.emit("resetBoard", this.piecesArray, this.color);
 
-      this.winner = false;
+      this.winner = null;
 
     },
     //When a tile is clicked while a piece is selected, delete the piece at the old position,
@@ -296,9 +301,7 @@ export default {
       this.turn = !this.turn;
 
       this.$socket.client.emit("moveEvent", this.piecesArray);
-
       this.checkWin();
-
       this.$forceUpdate();
     },
 
@@ -794,7 +797,7 @@ export default {
       ) {
         this.undoArray = prev;
       } else {
-        prev = null;
+        this.undoArray = null;
       }
 
       if (turn == null) {
@@ -808,10 +811,10 @@ export default {
       } else {
         this.turn = (this.color == "White") == turn;
       }
+      this.winner=null;
       this.checkWin();
       this.$forceUpdate();
-      console.log(turn);
-      console.log(this.color);
+
     },
     moveResponse(recievedArray) {
       this.undoArray = [...this.piecesArray];
