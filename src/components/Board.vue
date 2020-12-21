@@ -1,83 +1,105 @@
 <template>
   <div class="board">
-    <!-- Creates an html table to simulate a chessboard -->
-    <!-- idea taken from https://stackoverflow.com/questions/26432492/chessboard-html5-only/26432909 -->
-    <p v-if="color === null">Please wait...</p>
-    <p v-else-if="color === 'Gray'">You are a spectator.</p>
-    <p v-else>You are {{ color }}.</p>
-    <p v-if="turn && winner === null">It is your turn.</p>
-    <p v-else-if="winner === null">It is your opponent's turn.</p>
-    <p v-if="undo && color !== 'Gray' && winner == null">
-      Your opponent wants to undo this move.
-    </p>
-    <button
-      v-if="color !== 'Gray' && undoArray != null && winner == null"
-      class="button"
-      @click="voteToUndoMove"
-    >
-      Undo Move
-    </button>
-    <p v-if="rb && color === 'Black'">
-      (You will recieve the board when your opponent makes their first move.)
-    </p>
-    <p v-if="winner">{{ winner }} wins!</p>
-
-    <table class="chess-board">
-      <tbody>
-        <tr>
-          <th></th>
-          <th>a</th>
-          <th>b</th>
-          <th>c</th>
-          <th>d</th>
-          <th>e</th>
-          <th>f</th>
-          <th>g</th>
-          <th>h</th>
-        </tr>
-        <!-- Use Vue.JS functions to iterate through each square of the chess board and -->
-        <!-- Dynamically put chess pieces where they belong and empty clickable tile squares otherwise. -->
-        <!-- Additionally, alternate between dark and light tiles. -->
-        <tr v-for="n in 8" :key="n">
-          <th>{{ 9 - n }}</th>
-          <td
-            v-for="m in 8"
-            :key="m"
-            :class="{
-              light: (n + m) % 2 == 0,
-              dark: (n + m) % 2 == 1,
-              highlight: startposition === String(8 - n) + String(m - 1),
-            }"
-          >
-            <Tile
-              v-if="piecesArray[8 - n][m - 1] === null"
-              :space="String(8 - n) + String(m - 1)"
-              v-on:tileSelected="tileSelection"
-            />
-            <Piece
-              v-if="piecesArray[8 - n][m - 1] != null"
-              :pieceType="piecesArray[8 - n][m - 1]"
-              :space="String(8 - n) + String(m - 1)"
-              :highlight="startposition === String(8 - n) + String(m - 1)"
-              v-on:pieceSelected="pieceSelection"
-            />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <!-- Creates button for choice when promotion should occur -->
-    <transition v-if="promotion" name="fade" appear>
-      <div
-        class="modal-overlay"
-        v-if="showModal"
-        @click="showModal = false"
-      ></div>
-    </transition>
-    <transition name="slide" appear>
-      <div class="modal" v-if="showModal">
-        <h1>Pick a promotion.</h1>
+    <div v-if="gameFullScreen" id="fullRoom" style="top: 35%">
+      <h1>Game Room is Full.</h1>
+      <h2>Would you like to spectate?</h2>
+      <div>
+        <button
+          class="button"
+          @click="gameFullScreen = false"
+          style="margin-right: 50px"
+        >
+          Specatate
+        </button>
+        <button class="button" @click="$router.push({ path: '/' })">
+          Go Back
+        </button>
       </div>
-    </transition>
+    </div>
+
+    <div v-else>
+      <!-- Creates an html table to simulate a chessboard -->
+      <!-- idea taken from https://stackoverflow.com/questions/26432492/chessboard-html5-only/26432909 -->
+      <p v-if="color === null">Please wait...</p>
+      <p v-else-if="color === 'Gray'">You are a spectator.</p>
+      <p v-else>You are {{ color }}.</p>
+      <div v-if="color === 'Gray'">
+        <p v-if="turn && winner === null">It is White's turn.</p>
+        <p v-else-if="winner === null">It is Black's turn.</p>
+      </div>
+      <div v-else>
+        <p v-if="turn && winner === null">It is your turn.</p>
+        <p v-else-if="winner === null">It is your opponent's turn.</p>
+      </div>
+      <p v-if="undo && color !== 'Gray' && winner == null">
+        Your opponent wants to undo this move.
+      </p>
+      <button
+        v-if="color !== 'Gray' && undoArray != null && winner == null"
+        class="button"
+        @click="voteToUndoMove"
+      >
+        Undo Move
+      </button>
+      <p v-if="winner">{{ winner }} wins!</p>
+
+      <table class="chess-board">
+        <tbody>
+          <tr>
+            <th></th>
+            <th>a</th>
+            <th>b</th>
+            <th>c</th>
+            <th>d</th>
+            <th>e</th>
+            <th>f</th>
+            <th>g</th>
+            <th>h</th>
+          </tr>
+          <!-- Use Vue.JS functions to iterate through each square of the chess board and -->
+          <!-- Dynamically put chess pieces where they belong and empty clickable tile squares otherwise. -->
+          <!-- Additionally, alternate between dark and light tiles. -->
+          <tr v-for="n in 8" :key="n">
+            <th>{{ 9 - n }}</th>
+            <td
+              v-for="m in 8"
+              :key="m"
+              :class="{
+                light: (n + m) % 2 == 0,
+                dark: (n + m) % 2 == 1,
+                highlight: startposition === String(8 - n) + String(m - 1),
+              }"
+            >
+              <Tile
+                v-if="piecesArray[8 - n][m - 1] === null"
+                :space="String(8 - n) + String(m - 1)"
+                v-on:tileSelected="tileSelection"
+              />
+              <Piece
+                v-if="piecesArray[8 - n][m - 1] != null"
+                :pieceType="piecesArray[8 - n][m - 1]"
+                :space="String(8 - n) + String(m - 1)"
+                :highlight="startposition === String(8 - n) + String(m - 1)"
+                v-on:pieceSelected="pieceSelection"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- Creates button for choice when promotion should occur -->
+      <transition v-if="promotion" name="fade" appear>
+        <div
+          class="modal-overlay"
+          v-if="showModal"
+          @click="showModal = false"
+        ></div>
+      </transition>
+      <transition name="slide" appear>
+        <div class="modal" v-if="showModal">
+          <h1>Pick a promotion.</h1>
+        </div>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -116,7 +138,6 @@ export default {
       color: null,
       turn: null,
       startposition: null,
-      rb: null,
       winner: null,
       undo: false,
     };
@@ -124,14 +145,16 @@ export default {
   mounted: function () {
     if (String(this.$route.params.gameID).charAt(0) === "1") {
       this.setupChess();
-      this.rb = false;
     } else {
       this.setupRBChess();
-      this.rb = true;
     }
 
     //Joins room upon board being created
-    this.$socket.client.emit("joinRoom", this.$route.params.gameID);
+    this.$socket.client.emit(
+      "joinRoom",
+      this.$route.params.gameID,
+      this.piecesArray
+    );
     //Somewhere either here or another function, we should retrieve the chessboard.
   },
   methods: {
@@ -246,8 +269,6 @@ export default {
       this.startposition = null;
       this.endposition = null;
       this.turn = !this.turn;
-
-      this.rb = false;
 
       this.$socket.client.emit("moveEvent", this.piecesArray);
 
@@ -723,15 +744,39 @@ export default {
   },
 
   sockets: {
-    fullRoom() {
-      console.log("full");
-    },
-    setColor(c) {
-      this.color = c;
-      this.turn = c === "White" ? true : false;
-      if (this.rb && this.color === "Black") {
-        this.piecesArray = Array.from(Array(8), () => new Array(8).fill(null));
+    setBoard(c, recievedArray, turn, prev) {
+      if (c == null) {
+        this.gameFullScreen = true;
+        this.color = "Gray";
+      } else {
+        this.color = c;
       }
+
+      if (recievedArray != null) {
+        this.piecesArray = recievedArray;
+      }
+      if (
+        prev != null &&
+        JSON.stringify(prev) !== JSON.stringify(recievedArray)
+      ) {
+        this.undoArray = prev;
+      }
+
+      if (turn == null) {
+        if (this.color == "Gray") {
+          this.turn = true;
+        } else {
+          this.turn = c === "White" ? true : false;
+        }
+      } else if (this.color == "Gray") {
+        this.turn = turn;
+      } else {
+        this.turn = (this.color == "White") == turn;
+      }
+      this.checkWin();
+      this.$forceUpdate();
+      console.log(turn);
+      console.log(this.color);
     },
     moveResponse(recievedArray) {
       this.undoArray = [...this.piecesArray];
@@ -741,7 +786,6 @@ export default {
       this.startposition = null;
       this.endposition = null;
       this.turn = !this.turn;
-      this.rb = false;
 
       this.checkWin();
       this.$forceUpdate();
@@ -768,6 +812,9 @@ export default {
         this.undo = true;
         console.log("Recieved opponent's undo request");
       }
+    },
+    moveEventRequest() {
+      this.$socket.client.emit("moveEvent", this.piecesArray);
     },
   },
 };
@@ -804,5 +851,15 @@ export default {
 
 .button {
   cursor: pointer;
+}
+.board {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
 }
 </style>
