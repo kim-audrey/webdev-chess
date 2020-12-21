@@ -47,7 +47,7 @@
       <button
         v-if="winner"
         class="button"
-        @click="setupChess"
+        @click="rematch"
       > Rematch</button>
       
 
@@ -229,6 +229,18 @@ export default {
       }
       this.piecesArray[7][4] = "BlackKing";
       this.piecesArray[0][4] = "WhiteKing";
+    },
+    rematch: function(){
+      if (String(this.$route.params.gameID).charAt(0) === "1") {
+        this.setupChess();
+      } else {
+        this.setupRBChess();
+      }
+
+      this.$socket.client.emit("resetBoard", this.piecesArray, this.color);
+
+      this.winner = false;
+
     },
     //When a tile is clicked while a piece is selected, delete the piece at the old position,
     //move it to the new position, store the new board, and send it to the opponent.
@@ -781,6 +793,8 @@ export default {
         JSON.stringify(prev) !== JSON.stringify(recievedArray)
       ) {
         this.undoArray = prev;
+      } else {
+        prev = null;
       }
 
       if (turn == null) {

@@ -98,6 +98,25 @@ io.on("connection", (socket) => {
         }
         socket.to(code).emit("undoResponse", agreer);
       });
+
+      socket.on("resetBoard", (boardSetup, color) => {
+        roomP.currTurn = true;
+        roomP.prevBoard = null;
+        roomP.board = boardSetup;
+
+        var cs = color === "White" ? "Black" : "White";
+          socket.to(code).emit(
+            "setBoard",
+            cs,
+            roomP.board,
+            roomP.currTurn,
+            roomP.prevBoard
+          );
+      });
+
+      
+      
+
     }
   });
 });
