@@ -24,18 +24,6 @@ io.on("connection", (socket) => {
   socket.on("roomListRequest", () => {
     socket.emit("roomListResponse", Array.from(io.sockets.adapter.rooms));
   });
-
-  socket.on("clearSocket", ()=>{
-    socket.leave(socket.room);
-    socket.room=null
-
-    if(socket.roomP!=null){
-      socket.leave(socket.roomP);
-      socket.roomP=null
-
-    }
-  });
-
   socket.on("joinRoom", (code) => {
     socket.leave(socket.room);
     if(socket.roomP!=null){
