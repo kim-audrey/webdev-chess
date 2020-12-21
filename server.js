@@ -36,7 +36,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("joinRoom", (code) => {
+  socket.on("joinRoom", (code, board) => {
     socket.leave(socket.room);
     if(socket.roomP!=null){
       socket.leave(socket.roomP);
@@ -54,18 +54,19 @@ io.on("connection", (socket) => {
     else {
       socket.join(codeP);
       socket.roomP=codeP;
-      var roomP = io.sockets.adapter.rooms.get(codeP);
+      roomP = io.sockets.adapter.rooms.get(codeP);
 
       if (roomP.size == 1) {
         var cf = Math.random() < 0.5 ? "Black" : "White";
-        socket.emit("setBoard", cf,roomP.board, roomP.currTurn);
+        roomP.board=board;
+        socket.emit("setBoard", cf,roomP.board, roomP.currTurn, roomP.prevBoard);
 
       } else if (roomP.size == 2) {
         socket.to(codeP).emit("getColor");
 
         socket.on("giveColor", (col) => {
           var cs = col === "White" ? "Black" : "White";
-          socket.emit("setBoard", cs,roomP.board, roomP.currTurn);
+          socket.emit("setBoard", cs,roomP.board, roomP.currTurn, roomP.prevBoard);
         });
       }
 
@@ -76,6 +77,7 @@ io.on("connection", (socket) => {
         else{
           roomP.currTurn=!roomP.currTurn;
         }
+        roomP.prevBoard=roomP.board
         roomP.board=data;
         socket.to(code).emit("moveResponse", data);
       });
@@ -86,6 +88,7 @@ io.on("connection", (socket) => {
       
       socket.on("undoEvent", (agreer) => {
         console.log("Recieved request from sender");
+        roomP.board=roomP.prevBoard;
         socket.to(code).emit("undoResponse", agreer);
         console.log("Information sent to reciever");
       });

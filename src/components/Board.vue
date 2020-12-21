@@ -153,8 +153,9 @@ export default {
       this.rb = true;
     }
 
+
     //Joins room upon board being created
-    this.$socket.client.emit("joinRoom", this.$route.params.gameID);
+    this.$socket.client.emit("joinRoom", this.$route.params.gameID, this.piecesArray);
     //Somewhere either here or another function, we should retrieve the chessboard.
   },
   methods: {
@@ -747,7 +748,7 @@ export default {
   },
 
   sockets: {
-    setBoard(c, recievedArray, turn){
+    setBoard(c, recievedArray, turn, prev){
       if(c==null){
         this.gameFullScreen=true;
         this.color='Gray'
@@ -759,6 +760,10 @@ export default {
       if(recievedArray!=null){
         this.piecesArray = recievedArray;
       }
+      if(prev!=null && JSON.stringify(prev) !== JSON.stringify(recievedArray)){
+        this.undoArray = prev;
+      }
+      
       if(turn==null){
         if(this.color=="Gray"){
           this.turn=true
