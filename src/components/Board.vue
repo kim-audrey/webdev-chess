@@ -266,6 +266,8 @@ export default {
       ][startspace[1]];
       this.piecesArray[startspace[0]][startspace[1]] = null;
 
+      this.checkPromotion();
+
       this.startposition = null;
       this.endposition = null;
       this.turn = !this.turn;
@@ -721,6 +723,14 @@ export default {
       if (whiteWins) this.winner = "White";
       if (blackWins) this.winner = "Black";
     },
+    checkPromotion: function(){
+      for (var i = 0; i < 8; i++) {
+       if(this.piecesArray[0][i]=="BlackPawn"){this.piecesArray[0][i]="BlackQueen"}
+       if(this.piecesArray[7][i]=="WhitePawn"){this.piecesArray[7][i]="WhiteQueen"}
+      }
+    },
+
+
     voteToUndoMove() {
       //if this.undo is false, it means this player is the first one to request undoing,
       //and the server will set the other player's this.undo to true to allow them
