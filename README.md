@@ -13,14 +13,20 @@ To move pieces, click your piece and then the square which you'd like your piece
 
 ## How the Code Works
 ### Selecting Pieces
-After selecting a piece, the next tile selected sends a pair of (startposition, endposition) to determine if the move is valid
-
+After selecting a piece, the next tile selected sends a pair of (startposition, endposition) to determine if the move is valid. There is a check for promotion after move is done. This would make it an auto queen. 
 
 ### Determining if a move is valid
 A lottta if statements if a turn can be transmitted at all on that side, if the piece selected is of the side of the client, and if it is a legal move of the piece selected.
 
 ### Color assignment
 Colors are randomly assigned. 
+
+## Some more Things
+### Rematches
+### It's Online!
+
+
+
 
 
 
