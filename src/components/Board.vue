@@ -1,14 +1,17 @@
 <template>
-
   <div class="board">
-    <div v-if="gameFullScreen" id="fullRoom" style="top:35%;">
-      <h1 >Game Room is Full.</h1>
-      <h2> Would you like to spectate?</h2>
+    <div v-if="gameFullScreen" id="fullRoom" style="top: 35%">
+      <h1>Game Room is Full.</h1>
+      <h2>Would you like to spectate?</h2>
       <div>
-        <button class="button" @click="gameFullScreen=false" style="margin-right: 50px">
+        <button
+          class="button"
+          @click="gameFullScreen = false"
+          style="margin-right: 50px"
+        >
           Specatate
         </button>
-        <button class="button" @click="$router.push({ path: '/' });">
+        <button class="button" @click="$router.push({ path: '/' })">
           Go Back
         </button>
       </div>
@@ -20,9 +23,9 @@
       <p v-if="color === null">Please wait...</p>
       <p v-else-if="color === 'Gray'">You are a spectator.</p>
       <p v-else>You are {{ color }}.</p>
-      <div v-if="color==='Gray'">
-        <p v-if="turn && winner === null">It is white's turn.</p>
-        <p v-else-if="winner === null">It is black's turn.</p>
+      <div v-if="color === 'Gray'">
+        <p v-if="turn && winner === null">It is White's turn.</p>
+        <p v-else-if="winner === null">It is Black's turn.</p>
       </div>
       <div v-else>
         <p v-if="turn && winner === null">It is your turn.</p>
@@ -38,9 +41,6 @@
       >
         Undo Move
       </button>
-      <p v-if="rb && color === 'Black'">
-        (You will recieve the board when your opponent makes their first move.)
-      </p>
       <p v-if="winner">{{ winner }} wins!</p>
 
       <table class="chess-board">
@@ -138,7 +138,6 @@ export default {
       color: null,
       turn: null,
       startposition: null,
-      rb: null,
       winner: null,
       undo: false,
       gameFullScreen: false,
@@ -147,15 +146,16 @@ export default {
   mounted: function () {
     if (String(this.$route.params.gameID).charAt(0) === "1") {
       this.setupChess();
-      this.rb = false;
     } else {
       this.setupRBChess();
-      this.rb = true;
     }
 
-
     //Joins room upon board being created
-    this.$socket.client.emit("joinRoom", this.$route.params.gameID, this.piecesArray);
+    this.$socket.client.emit(
+      "joinRoom",
+      this.$route.params.gameID,
+      this.piecesArray
+    );
     //Somewhere either here or another function, we should retrieve the chessboard.
   },
   methods: {
@@ -256,7 +256,6 @@ export default {
     //Move a piece to a different square and remove it from this space,
     //then pass the turn to the other player.
     move: function (startposition, endposition) {
-
       this.undoArray = JSON.parse(JSON.stringify(this.piecesArray));
       this.undo = false;
       // In the move function, meaning move was legal
@@ -271,8 +270,6 @@ export default {
       this.startposition = null;
       this.endposition = null;
       this.turn = !this.turn;
-
-      this.rb = false;
 
       this.$socket.client.emit("moveEvent", this.piecesArray);
 
@@ -748,45 +745,37 @@ export default {
   },
 
   sockets: {
-    setBoard(c, recievedArray, turn, prev){
-      if(c==null){
-        this.gameFullScreen=true;
-        this.color='Gray'
-      }
-      else{
+    setBoard(c, recievedArray, turn, prev) {
+      if (c == null) {
+        this.gameFullScreen = true;
+        this.color = "Gray";
+      } else {
         this.color = c;
       }
 
-      if(recievedArray!=null){
+      if (recievedArray != null) {
         this.piecesArray = recievedArray;
       }
-      if(prev!=null && JSON.stringify(prev) !== JSON.stringify(recievedArray)){
+      if (
+        prev != null &&
+        JSON.stringify(prev) !== JSON.stringify(recievedArray)
+      ) {
         this.undoArray = prev;
       }
-      
-      if(turn==null){
-        if(this.color=="Gray"){
-          this.turn=true
-        }
-        else{
+
+      if (turn == null) {
+        if (this.color == "Gray") {
+          this.turn = true;
+        } else {
           this.turn = c === "White" ? true : false;
         }
+      } else if (this.color == "Gray") {
+        this.turn = turn;
+      } else {
+        this.turn = (this.color == "White") == turn;
       }
-      else if(this.color=="Gray"){
-        this.turn=turn
-      }
-      else{
-        this.turn= (this.color=="White") == turn
-      }
-      console.log(turn)
-      console.log(this.color)
-    },
-    setColor(c) {
-      this.color = c;
-      this.turn = c === "White" ? true : false;
-      if (this.rb && this.color === "Black") {
-        this.piecesArray = Array.from(Array(8), () => new Array(8).fill(null));
-      }
+      console.log(turn);
+      console.log(this.color);
     },
     moveResponse(recievedArray) {
       this.undoArray = [...this.piecesArray];
@@ -796,10 +785,9 @@ export default {
       this.startposition = null;
       this.endposition = null;
       this.turn = !this.turn;
-      this.rb = false;
 
       this.checkWin();
-      this.$forceUpdate();    
+      this.$forceUpdate();
     },
     getColor() {
       if (this.color != null) {
@@ -824,7 +812,7 @@ export default {
         console.log("Recieved opponent's undo request");
       }
     },
-    moveEventRequest(){
+    moveEventRequest() {
       this.$socket.client.emit("moveEvent", this.piecesArray);
     },
   },
@@ -870,7 +858,7 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%; 
+  height: 100%;
   width: 100%;
 }
 </style>
