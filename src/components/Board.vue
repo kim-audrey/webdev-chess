@@ -86,7 +86,7 @@
           </tr>
         </tbody>
       </table>
-      <!-- Creates button for choice when promotion should occur -->
+      <!-- Creates button for choice when promotion should occur
       <transition v-if="promotion" name="fade" appear>
         <div
           class="modal-overlay"
@@ -98,7 +98,7 @@
         <div class="modal" v-if="showModal">
           <h1>Pick a promotion.</h1>
         </div>
-      </transition>
+      </transition> -->
     </div>
   </div>
 </template>
@@ -276,6 +276,50 @@ export default {
 
       this.checkWin();
 
+      this.$forceUpdate();
+    },
+    castleMove: function(color, side){
+      this.undoArray = JSON.parse(JSON.stringify(this.piecesArray));
+      this.undo = false;
+
+      if(color==="Black"){
+        if(side=="short"){
+          this.piecesArray[7][7]=null;
+          this.piecesArray[7][5]="BlackRook"
+          this.piecesArray[7][4]=null;
+          this.piecesArray[7][6]="BlackKing";
+        }
+        if(side=="long"){
+          this.piecesArray[7][0]=null;
+          this.piecesArray[7][3]="BlackRook"
+          this.piecesArray[7][4]=null;
+          this.piecesArray[7][2]="BlackKing";
+        }
+
+      }
+      if(color==="White"){
+         if(side=="short"){
+          this.piecesArray[0][7]=null;
+          this.piecesArray[0][5]="WhiteRook"
+          this.piecesArray[0][4]=null;
+          this.piecesArray[0][6]="WhiteKing";
+
+        }
+        if(side=="long"){
+           this.piecesArray[0][0]=null;
+          this.piecesArray[0][3]="WhiteRook"
+          this.piecesArray[0][4]=null;
+          this.piecesArray[0][2]="WhiteKing";
+        }
+
+      }
+
+
+      this.startposition = null;
+      this.endposition = null;
+      this.turn = !this.turn;
+      this.$socket.client.emit("moveEvent", this.piecesArray);
+      this.checkWin();
       this.$forceUpdate();
     },
 
@@ -672,6 +716,9 @@ export default {
     },
 
     kingLogic: function (startspace, endspace, color) {
+      if(endspace[1]===startspace[1]+2||endspace[1]===startspace[1]-2){
+        this.castleLogic(startspace,endspace,color)
+      }
       var i, j;
       for (i = -1; i <= 1; i++) {
         for (j = -1; j <= 1; j++) {
@@ -710,6 +757,41 @@ export default {
       this.endposition = null;
       return;
     },
+    castleLogic: function(startspace,endspace,color){
+      if(color=="White"){
+        if(endspace[1]==startspace[1]+2&&endspace[1]==6){
+          //short castle
+          if(this.piecesArray[0][7]!=null&&this.piecesArray[0][7]==="WhiteRook"&&this.piecesArray[0][6]===null&&this.piecesArray[0][5]===null){
+            console.log("Hi, I'm sadm")
+            this.castleMove(color,"short");
+          }
+        }
+        if(endspace[1]==startspace[1]-2&&endspace[1]==2){
+          //short castle
+          if(this.piecesArray[0][0]!=null&&this.piecesArray[0][0]==="WhiteRook"&&this.piecesArray[0][1]===null&&this.piecesArray[0][2]===null&&this.piecesArray[0][3]===null){
+            this.castleMove(color,"long");
+          }
+        }
+      }
+      if(color=="Black"){
+        if(endspace[1]==startspace[1]+2){
+          //short castle
+          if(this.piecesArray[7][7]!=null&&this.piecesArray[7][7]==="BlackRook"&&this.piecesArray[7][6]===null&&this.piecesArray[7][5]===null){
+            this.castleMove(color,"short");
+          }
+        }
+        if(endspace[1]==startspace[1]-2){
+          //short castle
+          if(this.piecesArray[7][0]!=null&&this.piecesArray[7][0]==="BlackRook"&&this.piecesArray[7][1]===null&&this.piecesArray[7][2]===null&&this.piecesArray[7][3]===null){
+            this.castleMove(color,"long");
+          }
+        }
+      }
+      
+    },
+
+
+
     checkWin: function () {
       var whiteWins = true;
       var blackWins = true;
