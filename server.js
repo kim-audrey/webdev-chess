@@ -95,13 +95,11 @@ io.on("connection", (socket) => {
       });
 
       socket.on("undoEvent", (agreer) => {
-        console.log("Recieved request from sender");
         if (agreer) {
           roomP.board = roomP.prevBoard;
           roomP.currTurn = !roomP.currTurn;
         }
         socket.to(code).emit("undoResponse", agreer);
-        console.log("Information sent to reciever");
       });
     }
   });

@@ -774,6 +774,8 @@ export default {
       } else {
         this.turn = (this.color == "White") == turn;
       }
+      this.checkWin();
+      this.$forceUpdate();
       console.log(turn);
       console.log(this.color);
     },
