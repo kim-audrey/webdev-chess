@@ -34,6 +34,10 @@
       <p v-if="undo && color !== 'Gray' && winner == null">
         Your opponent wants to undo this move.
       </p>
+      <p v-if="undoConfirmation">You have requested to undo a move.</p>
+      <p v-if="undoConfirmation">
+        Your opponent can either agree to undo or continue playing.
+      </p>
       <button
         v-if="color !== 'Gray' && undoArray != null && winner == null"
         class="button"
@@ -41,15 +45,17 @@
       >
         Undo Move
       </button>
-      <p v-if="winner">{{ winner }} wins!</p> 
+      <p v-if="winner">{{ winner }} wins!</p>
 
       <!-- Button turns on for rematch! 12/20 -->
+
       <button
         v-if="winner"
         class="button"
         @click="rematch"
       > Rematch</button>
       
+
 
       <table class="chess-board">
         <tbody>
@@ -94,7 +100,7 @@
           </tr>
         </tbody>
       </table>
-      <!-- Creates button for choice when promotion should occur -->
+      <!-- Creates button for choice when promotion should occur
       <transition v-if="promotion" name="fade" appear>
         <div
           class="modal-overlay"
@@ -106,7 +112,7 @@
         <div class="modal" v-if="showModal">
           <h1>Pick a promotion.</h1>
         </div>
-      </transition>
+      </transition> -->
     </div>
   </div>
 </template>
@@ -137,9 +143,9 @@ export default {
       //color: The player color (Gray for spectators)
       //turn: Whether it is your turn
       //startposition: The chosen square to begin a move from
-      //rb: Whether it is the opening of a really bad game, so Black won't generate a board
       //winner: Who the winner is
       //undo: Whether this player has been given the ability to undo a move after their opponent first requested it
+      //undoConfirmation: Whether this player requested to undo a move, so they know their request went through.
       //Array creation taken from https://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
       piecesArray: Array.from(Array(8), () => new Array(8).fill(null)),
       undoArray: null,
@@ -148,6 +154,7 @@ export default {
       startposition: null,
       winner: null,
       undo: false,
+      undoConfirmation: false,
     };
   },
   mounted: function () {
@@ -177,22 +184,18 @@ export default {
             if (j === 2 || j === 5) this.piecesArray[i][j] = "BlackBishop";
             if (j === 3) this.piecesArray[i][j] = "BlackQueen";
             if (j === 4) this.piecesArray[i][j] = "BlackKing";
-          }
-          else if (i === 6) {
+          } else if (i === 6) {
             this.piecesArray[i][j] = "BlackPawn";
-          }
-          else if (i === 1) {
+          } else if (i === 1) {
             this.piecesArray[i][j] = "WhitePawn";
-          }
-          else if (i === 0) {
+          } else if (i === 0) {
             if (j === 0 || j === 7) this.piecesArray[i][j] = "WhiteRook";
             if (j === 1 || j === 6) this.piecesArray[i][j] = "WhiteKnight";
             if (j === 2 || j === 5) this.piecesArray[i][j] = "WhiteBishop";
             if (j === 3) this.piecesArray[i][j] = "WhiteQueen";
             if (j === 4) this.piecesArray[i][j] = "WhiteKing";
-          }
-          else {
-            this.piecesArray[i][j] = null; 
+          } else {
+            this.piecesArray[i][j] = null;
           }
         }
       }
@@ -300,6 +303,46 @@ export default {
       this.endposition = null;
       this.turn = !this.turn;
 
+      this.$socket.client.emit("moveEvent", this.piecesArray);
+      this.checkWin();
+      this.$forceUpdate();
+    },
+    castleMove: function (color, side) {
+      this.undoArray = JSON.parse(JSON.stringify(this.piecesArray));
+      this.undo = false;
+
+      if (color === "Black") {
+        if (side == "short") {
+          this.piecesArray[7][7] = null;
+          this.piecesArray[7][5] = "BlackRook";
+          this.piecesArray[7][4] = null;
+          this.piecesArray[7][6] = "BlackKing";
+        }
+        if (side == "long") {
+          this.piecesArray[7][0] = null;
+          this.piecesArray[7][3] = "BlackRook";
+          this.piecesArray[7][4] = null;
+          this.piecesArray[7][2] = "BlackKing";
+        }
+      }
+      if (color === "White") {
+        if (side == "short") {
+          this.piecesArray[0][7] = null;
+          this.piecesArray[0][5] = "WhiteRook";
+          this.piecesArray[0][4] = null;
+          this.piecesArray[0][6] = "WhiteKing";
+        }
+        if (side == "long") {
+          this.piecesArray[0][0] = null;
+          this.piecesArray[0][3] = "WhiteRook";
+          this.piecesArray[0][4] = null;
+          this.piecesArray[0][2] = "WhiteKing";
+        }
+      }
+
+      this.startposition = null;
+      this.endposition = null;
+      this.turn = !this.turn;
       this.$socket.client.emit("moveEvent", this.piecesArray);
       this.checkWin();
       this.$forceUpdate();
@@ -698,6 +741,12 @@ export default {
     },
 
     kingLogic: function (startspace, endspace, color) {
+      if (
+        endspace[1] === startspace[1] + 2 ||
+        endspace[1] === startspace[1] - 2
+      ) {
+        this.castleLogic(startspace, endspace, color);
+      }
       var i, j;
       for (i = -1; i <= 1; i++) {
         for (j = -1; j <= 1; j++) {
@@ -736,6 +785,60 @@ export default {
       this.endposition = null;
       return;
     },
+    castleLogic: function (startspace, endspace, color) {
+      if (color == "White") {
+        if (endspace[1] == startspace[1] + 2 && endspace[1] == 6) {
+          //short castle
+          if (
+            this.piecesArray[0][7] != null &&
+            this.piecesArray[0][7] === "WhiteRook" &&
+            this.piecesArray[0][6] === null &&
+            this.piecesArray[0][5] === null
+          ) {
+            console.log("Hi, I'm sadm");
+            this.castleMove(color, "short");
+          }
+        }
+        if (endspace[1] == startspace[1] - 2 && endspace[1] == 2) {
+          //short castle
+          if (
+            this.piecesArray[0][0] != null &&
+            this.piecesArray[0][0] === "WhiteRook" &&
+            this.piecesArray[0][1] === null &&
+            this.piecesArray[0][2] === null &&
+            this.piecesArray[0][3] === null
+          ) {
+            this.castleMove(color, "long");
+          }
+        }
+      }
+      if (color == "Black") {
+        if (endspace[1] == startspace[1] + 2) {
+          //short castle
+          if (
+            this.piecesArray[7][7] != null &&
+            this.piecesArray[7][7] === "BlackRook" &&
+            this.piecesArray[7][6] === null &&
+            this.piecesArray[7][5] === null
+          ) {
+            this.castleMove(color, "short");
+          }
+        }
+        if (endspace[1] == startspace[1] - 2) {
+          //short castle
+          if (
+            this.piecesArray[7][0] != null &&
+            this.piecesArray[7][0] === "BlackRook" &&
+            this.piecesArray[7][1] === null &&
+            this.piecesArray[7][2] === null &&
+            this.piecesArray[7][3] === null
+          ) {
+            this.castleMove(color, "long");
+          }
+        }
+      }
+    },
+
     checkWin: function () {
       var whiteWins = true;
       var blackWins = true;
@@ -749,27 +852,31 @@ export default {
       if (whiteWins) this.winner = "White";
       if (blackWins) this.winner = "Black";
     },
-    checkPromotion: function(){
+    checkPromotion: function () {
       for (var i = 0; i < 8; i++) {
-       if(this.piecesArray[0][i]=="BlackPawn"){this.piecesArray[0][i]="BlackQueen"}
-       if(this.piecesArray[7][i]=="WhitePawn"){this.piecesArray[7][i]="WhiteQueen"}
+        if (this.piecesArray[0][i] == "BlackPawn") {
+          this.piecesArray[0][i] = "BlackQueen";
+        }
+        if (this.piecesArray[7][i] == "WhitePawn") {
+          this.piecesArray[7][i] = "WhiteQueen";
+        }
       }
     },
-
 
     voteToUndoMove() {
       //if this.undo is false, it means this player is the first one to request undoing,
       //and the server will set the other player's this.undo to true to allow them
       //to actually undo the move.
       //if this.undo is ture, the server will undo the move and send it to everyone.
-      console.log("Button clicked");
       this.$socket.client.emit("undoEvent", this.undo);
-      console.log("Event sent to server");
-      console.log(this.undoArray === this.piecesArray);
+      if (!this.undo) {
+        this.undoConfirmation = true;
+      }
       if (this.undo) {
         this.piecesArray = this.undoArray;
         this.undo = false;
         this.undoArray = null;
+        this.undoConfirmation = false;
         this.startposition = null;
         this.endposition = null;
         this.turn = !this.turn;
@@ -819,6 +926,7 @@ export default {
     moveResponse(recievedArray) {
       this.undoArray = [...this.piecesArray];
       this.undo = false;
+      this.undoConfirmation = false;
 
       this.piecesArray = recievedArray;
       this.startposition = null;
@@ -840,15 +948,14 @@ export default {
       if (agreer) {
         this.piecesArray = this.undoArray;
         this.undo = false;
+        this.undoConfirmation = false;
         this.undoArray = null;
         this.startposition = null;
         this.endposition = null;
         this.turn = !this.turn;
         this.$forceUpdate();
-        console.log("Board reset for reciever");
       } else {
         this.undo = true;
-        console.log("Recieved opponent's undo request");
       }
     },
     moveEventRequest() {
