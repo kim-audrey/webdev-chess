@@ -1,4 +1,3 @@
-<!-- hi -->
 <template>
   <div class="board">
     <div v-if="gameFullScreen" id="fullRoom" style="top: 35%">
@@ -119,7 +118,8 @@
 </template>
 
 <script>
-//TODO: Store chessboard so it doesn't delete on refresh (use vuex?)
+//TODO: Store chessboard so it doesn't delete on refresh (use vuex?)\
+
 //Add movement logic
 //CHESS LOGIC
 // host it!
