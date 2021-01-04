@@ -157,6 +157,8 @@ export default {
       undoConfirmation: false,
       whitecastled:false,
       blackcastled:false,
+      whitekingmoved:false,
+      blackkingmoved:false
     };
   },
   mounted: function () {
@@ -778,6 +780,13 @@ export default {
                   endspace[0] == startspace[0] + i &&
                   endspace[1] == startspace[1] + j
                 ) {
+                  if(this.color=="Black"){
+                    this.blackkingmoved=true;
+                  }
+                  if(this.color=="White"){
+                    this.whitekingmoved=true;
+                  }
+                  
                   this.move(startspace, endspace);
                   return;
                 }
@@ -792,7 +801,7 @@ export default {
       return;
     },
     castleLogic: function (startspace, endspace, color) {
-      if (color == "White") {
+      if (color == "White" && this.whitekingmoved===false) {
         if (endspace[1] == startspace[1] + 2 && endspace[1] == 6) {
           //short castle
           if (
@@ -818,7 +827,7 @@ export default {
           }
         }
       }
-      if (color == "Black") {
+      if (color == "Black"&&this.blackkingmoved===false) {
         if (endspace[1] == startspace[1] + 2) {
           //short castle
           if (
