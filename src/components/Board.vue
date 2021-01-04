@@ -155,6 +155,8 @@ export default {
       winner: null,
       undo: false,
       undoConfirmation: false,
+      whitecastled:false,
+      blackcastled:false,
     };
   },
   mounted: function () {
@@ -311,32 +313,37 @@ export default {
       this.undoArray = JSON.parse(JSON.stringify(this.piecesArray));
       this.undo = false;
 
-      if (color === "Black") {
+
+      if (color === "Black"&& this.blackcastled===false) {
         if (side == "short") {
           this.piecesArray[7][7] = null;
           this.piecesArray[7][5] = "BlackRook";
           this.piecesArray[7][4] = null;
           this.piecesArray[7][6] = "BlackKing";
+          this.blackcastled==true;
         }
         if (side == "long") {
           this.piecesArray[7][0] = null;
           this.piecesArray[7][3] = "BlackRook";
           this.piecesArray[7][4] = null;
           this.piecesArray[7][2] = "BlackKing";
+          this.blackcastled==true;
         }
       }
-      if (color === "White") {
+      if (color === "White"&& this.whitecastled===false) {
         if (side == "short") {
           this.piecesArray[0][7] = null;
           this.piecesArray[0][5] = "WhiteRook";
           this.piecesArray[0][4] = null;
           this.piecesArray[0][6] = "WhiteKing";
+          this.whitecastled==true;
         }
         if (side == "long") {
           this.piecesArray[0][0] = null;
           this.piecesArray[0][3] = "WhiteRook";
           this.piecesArray[0][4] = null;
           this.piecesArray[0][2] = "WhiteKing";
+          this.whitecastled==true;
         }
       }
 
