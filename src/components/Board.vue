@@ -545,7 +545,6 @@ export default {
       var yMove = endspace[1] - startspace[1];
 
       if (xMove == 0 && yMove == 0) {
-        // are they not moving at all?
         console.log("illegal move -- bad movement");
         this.startposition = null;
         this.endposition = null;
@@ -575,7 +574,7 @@ export default {
         // if the spot we (successfully) land on has a piece, capture it.
         var endSpotPiece = this.piecesArray[x][y];
         if (endSpotPiece !== null) {
-          if (endSpotPiece.color != color) {
+          if (endSpotPiece.substring(0, 5) != color) {
             console.log("capture");
             this.move(startspace, endspace);
             return;
